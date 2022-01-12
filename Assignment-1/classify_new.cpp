@@ -1,5 +1,6 @@
-#include "classify.h"
+#include "classify_new.h"
 #include <omp.h>
+#include <chrono>
 
 Data classify(Data &D, const Ranges &R, unsigned int numt)
 {  
@@ -10,24 +11,23 @@ Data classify(Data &D, const Ranges &R, unsigned int numt)
    {
       int tid = omp_get_thread_num(); // I am thread number tid
       for(int i=tid; i<D.ndata; i+=numt) { // Threads together share-loop through all of Data
-         int v = D.data[i].value = R.range(D.data[i].key);// For each data, find the interval of data's key,
+         int v = D.data[i].value = R.range_binary(D.data[i].key);// For each data, find the interval of data's key,
 							  // and store the interval id in value. D is changed.
          counts[v].increase(tid); // Found one key in interval v
       }
    }
 
+   // Optimisation 3: (Minor) Compute prefix sum and accumulate sub-parts simultaneously
    // Accumulate all sub-counts (in each interval;'s counter) into rangecount
+   // Also compute prefix sum
    unsigned int *rangecount = new unsigned int[R.num()];
-   for(int r=0; r<R.num(); r++) { // For all intervals
+   rangecount[0] = 0;
+   for(int r=1; r<R.num(); r++) { // For all intervals
       rangecount[r] = 0;
       for(int t=0; t<numt; t++) // For all threads
          rangecount[r] += counts[r].get(t);
+      rangecount[r] += rangecount[r - 1];
       // std::cout << rangecount[r] << " elements in Range " << r << "\n"; // Debugging statement
-   }
-
-   // Compute prefx sum on rangecount.
-   for(int i=1; i<R.num(); i++) {
-      rangecount[i] += rangecount[i-1];
    }
 
    // Now rangecount[i] has the number of elements in intervals before the ith interval.

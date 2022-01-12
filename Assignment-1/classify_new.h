@@ -12,6 +12,8 @@ class Ranges;
 
 Data classify(Data &D, const Ranges &R, unsigned int numt);
 
+// Optimization 1: Try to align counter with 0 (mod 64) address
+//                 to ensure that no two counters are in the same cache line
 class alignas(32) Counter { // Aligned allocation per counter. Is that enough?
                             // Keeps per-thread subcount.
    public:
@@ -93,6 +95,37 @@ class Ranges {
             set(_num++, range.lo, range.hi); // Add the new interval at the end
          }
          return *this;
+      }
+
+      // Optimisation 2: Use binary search instead of linear search
+      int range_binary(int val, bool strict = false) const {
+         int low = 0, high = _num - 1, mid = 0;
+         if(strict) {
+            while(low <= high) {
+               mid = (low + high) / 2;
+               if(_ranges[mid].strictlyin(val))
+                  return mid;
+               else if(val >= _ranges[mid].hi) {
+                  low = mid + 1;
+               }
+               else {
+                  high = mid  - 1;
+               }
+            }
+         } else {
+            while(low <= high) {
+               mid = (low + high) / 2;
+               if(_ranges[mid].within(val))
+                  return mid;
+               else if(val > _ranges[mid].hi) {
+                  low = mid + 1;
+               }
+               else {
+                  high = mid - 1;
+               }
+            }
+         }
+         return BADRANGE; // Did not find any range
       }
 
       int range(int val, bool strict = false) const { // Tell the range in which val lies (strict => boundary match not ok)
