@@ -171,6 +171,14 @@ struct Data {
    struct Item {
       int key;
       int value = -1;
+      Item() {
+         key = 0;
+         value = -1;
+      }
+      Item(int key, int value) {
+         this->key = key;
+         this->value = value;
+      }
    };
 
    unsigned int ndata = 0;

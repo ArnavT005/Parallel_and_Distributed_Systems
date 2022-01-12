@@ -14,10 +14,10 @@ classify_new:$(objects_new)
 	$(CC) $(CFLAGS) -fopenmp $^ -o $@
 
 run: classify
-	./classify rfile dfile 1009072 4 3
+	./classify rfile dfile 1009072 8 3
 
 run_new: classify_new
-	./classify_new rfile dfile 1009072 4 3
+	perf stat ./classify_new rfile dfile 1009072 8 3
 
 #classify.o: classify.h
 #	touch classify.o
