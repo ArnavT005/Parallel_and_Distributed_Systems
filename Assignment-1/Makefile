@@ -1,5 +1,4 @@
 CC=g++
-#g++ -std=c++11 -O2 -mavx2 -c classify.cpp 
 CFLAGS=-std=c++11 -O2
 
 sources=main.cpp classify.cpp
@@ -8,26 +7,14 @@ objects=$(sources:.cpp=.o)
 objects_new=$(sources_new:.cpp=.o)
 
 classify:$(objects)
-	$(CC) $(CFLAGS) -fopenmp $^ -o $@
-
-classify_new:$(objects_new)
-	$(CC) $(CFLAGS) -fopenmp $^ -o $@
+	$(CC) $(CFLAGS) -g -fopenmp $^ -o $@
 
 run: classify
-	./classify rfile dfile 1009072 8 3
+	./classify rfile dfile 1009072 63 1
 
-run_new: classify_new
-	perf stat ./classify_new rfile dfile 1009072 8 3
-
-#classify.o: classify.h
-#	touch classify.o
-#	$(CC) $(CFLAGS) -c $<
-#main.o: classify.h
-#	$(CC) $(CFLAGS) -c $<
-
-%.o: %.cpp classify.h classify_new.h
-	$(CC) $(CFLAGS) -c -fopenmp $<
+%.o: %.cpp classify.h
+	$(CC) $(CFLAGS) -g -fopenmp -c $<
 
 .PHONY: clean
 clean:
-	rm *.o classify classify_new
+	rm *.o classify

@@ -12,8 +12,26 @@ class Ranges;
 
 Data classify(Data &D, const Ranges &R, unsigned int numt);
 
-// Optimization 1: Try to align counter with 0 (mod 64) address
-//                 to ensure that no two counters are in the same cache line
+class alignas(32) Counter { // Aligned allocation per counter. Is that enough?
+                            // Keeps per-thread subcount.
+   public:
+      
+      Counter(unsigned int num);
+
+      void zero();
+
+      void increase(unsigned int id);
+
+      void xincrease(unsigned int id);
+
+      unsigned int get(unsigned int id) const;
+
+      void inspect();
+   private:
+      unsigned volatile int *_counts;
+      unsigned int _numcount; // Per-thread subcounts 
+      std::mutex cmutex;
+};
 
 struct Range { // Integer range
 
@@ -30,40 +48,29 @@ struct Range { // Integer range
 class Ranges {
    public:
       Ranges();
-      Ranges& operator+=(const Range range);
 
-      // Optimisation 2: Use binary search instead of linear search
-      int range_binary(int val, bool strict) const;
+      Ranges& operator+=(const Range range);
 
       int range(int val, bool strict) const;
 
       void inspect();
-
       int num() const;
 
    private:
       Range *_ranges;
       int   _num;
-
+      
       void set(int i, int lo, int hi);
 
       bool newrange(const Range r);
 };
 
-struct Item {
-   int key;
-   int value;
-   Item() {
-      key = 0;
-      value = -1;
-   }
-   Item(int key, int value) {
-      this->key = key;
-      this->value = value;
-   }
-};
-
 struct Data {
+
+   struct Item {
+      int key;
+      int value = -1;
+   };
 
    unsigned int ndata = 0;
    Item *data = NULL;
