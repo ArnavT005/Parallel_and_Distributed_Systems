@@ -47,12 +47,19 @@ class Ranges {
       bool newrange(const Range r);
 };
 
+struct Item {
+   int key;
+   int value = -1;
+   Item();
+   Item(int, int);
+};
+
 struct Data {
 
-   struct Item {
-      int key;
-      int value = -1;
-   };
+   // struct Item {
+   //    int key;
+   //    int value = -1;
+   // };
 
    unsigned int ndata = 0;
    Item *data = NULL;

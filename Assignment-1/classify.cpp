@@ -2,6 +2,7 @@
 #include <omp.h>
 #include <vector>
 #include <utility>
+#include <chrono>
 
 Range::Range(int a=1, int b=0) { // Constructor. Defaults to *bad* range
    lo = a;
@@ -98,11 +99,21 @@ bool Ranges::newrange(const Range r) { // Is the range r already in my list, or 
    return (range(r.lo, true) == BADRANGE && range(r.hi, true) == BADRANGE); // Overlaps are not allowed.
 }
 
+Item::Item() {
+   key = value = -1;
+}
+
+Item::Item(int a, int b) {
+   key = a;
+   value = b;
+}
+
 Data classify(Data &D, const Ranges &R, unsigned int numt)
 {  
    // Classify each item in D into intervals (given by R). Finally, produce in D2 data sorted by interval
    assert(numt < MAXTHREADS);
    
+   auto begin = std::chrono::high_resolution_clock::now();
    std::vector<std::vector<unsigned int>> counts(numt, std::vector<unsigned int>(R.num(), 0));
    std::vector<std::vector<int>> range(numt, std::vector<int>((int)(D.ndata / numt) + 1, 0));
    #pragma omp parallel num_threads(numt)
@@ -111,10 +122,13 @@ Data classify(Data &D, const Ranges &R, unsigned int numt)
       for(int i=tid; i<D.ndata; i+=numt) { // Threads together share-loop through all of Data
          int v = range[tid][i / numt] = R.range(D.data[i].key);// For each data, find the interval of data's key,
 							                                          // and store the interval id in value. D is changed.
+         // int v = D.data[i].value = R.range(D.data[i].key);
          counts[tid][v] ++;
       }
    }
-
+   auto end = std::chrono::high_resolution_clock::now();
+   auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+   std::cout << "First pragma " << (1e-6 * elapsed.count()) <<  " ms" << std::endl;
    // int k = 4;
    // #pragma omp parallel num_threads(numt)
    // {
@@ -131,6 +145,7 @@ Data classify(Data &D, const Ranges &R, unsigned int numt)
    //    // f(index) == (index / (k * numt)) * k + index % k
    // }
 
+   auto begin1 = std::chrono::high_resolution_clock::now();
    // Accumulate all sub-counts (in each interval's counter) into rangecount
    unsigned int *rangecount = new unsigned int[R.num()]();
    for(int t = 0; t < numt; t ++) {
@@ -141,9 +156,15 @@ Data classify(Data &D, const Ranges &R, unsigned int numt)
    for(int r = 1; r < R.num(); r ++) {
       rangecount[r] += rangecount[r - 1];
    }
+   auto end1 = std::chrono::high_resolution_clock::now();
+   auto elapsed1 = std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - begin1);
+   std::cout << "Rangecount sum " << (1e-6 * elapsed1.count()) <<  " ms" << std::endl;
    // Now rangecount[i] has the number of elements in intervals before the ith interval.
 
+   
+   auto begin2 = std::chrono::high_resolution_clock::now();
    std::vector<std::vector<std::pair<int, int>>> partitions(numt, std::vector<std::pair<int, int>>(0));
+   // std::vector<std::vector<Item>> partitions(numt, std::vector<Item>(0));
    std::vector<int> partition_size(numt, 0);
    for(int i = 0; i < D.ndata; i ++) {
       int r = range[i % numt][i / numt], p = -1;
@@ -154,19 +175,26 @@ Data classify(Data &D, const Ranges &R, unsigned int numt)
          p = r / (R.num() / numt);
       if(partition_size[p] == partitions[p].size())
          partitions[p].push_back({D.data[i].key, r});
+         // partitions[p].push_back(Item(D.data[i].key, r));
       else
          partitions[p][partition_size[p]] = {D.data[i].key, r};
+         // partitions[p][partition_size[p]] = Item(D.data[i].key, r);
       partition_size[p] ++;
    }
+   auto end2 = std::chrono::high_resolution_clock::now();
+   auto elapsed2 = std::chrono::duration_cast<std::chrono::nanoseconds>(end2 - begin2);
+   std::cout << "Partition determination " << (1e-6 * elapsed2.count()) <<  " ms" << std::endl;
 
    Data D2 = Data(D.ndata); // Make a copy
    std::vector<std::vector<std::pair<int, int>>> items(numt, std::vector<std::pair<int, int>>(0));
+   // std::vector<std::vector<Item>> items(numt, std::vector<Item>(0));  
    for(int i = 0; i < numt; i ++) {
-      items[i].resize(partition_size[i], {-1, -1});
+      items[i].resize(partition_size[i]);
       if(i != 0) 
          partition_size[i] += partition_size[i - 1];
    }
    
+   auto begin3 = std::chrono::high_resolution_clock::now();
    #pragma omp parallel num_threads(numt)
    {
       int tid = omp_get_thread_num();
@@ -175,26 +203,51 @@ Data classify(Data &D, const Ranges &R, unsigned int numt)
       int temp = (lower == 0) ? 0 : rangecount[lower - 1];
       for(int i = 0; i < partitions[tid].size(); i ++) {
          int r = partitions[tid][i].second;
+         // int r = partitions[tid][i].value;
          if(r == -1) 
             break;
          items[tid][rangecount[r - 1] - temp + rangeIndex[r - lower] ++] = {partitions[tid][i].first, r};
+         // items[tid][rangecount[r - 1] - temp + rangeIndex[r - lower] ++] = Item(partitions[tid][i].key, r);
       } 
    }
+   auto end3 = std::chrono::high_resolution_clock::now();
+   auto elapsed3 = std::chrono::duration_cast<std::chrono::nanoseconds>(end3 - begin3);
+   std::cout << "Second pragma " << (1e-6 * elapsed3.count()) <<  " ms" << std::endl;
 
+   auto begin4 = std::chrono::high_resolution_clock::now();
    #pragma omp parallel num_threads(numt)
    {
       int tid = omp_get_thread_num();
       for(int i = 0; i < items[tid].size(); i ++) {
          if(tid == 0) {
+            // D2.data[i] = items[tid][i];
             D2.data[i].key = items[tid][i].first;
             D2.data[i].value = items[tid][i].second;
          }
          else {
+            // D2.data[partition_size[tid - 1] + i] = items[tid][i];
             D2.data[partition_size[tid - 1] + i].key = items[tid][i].first;
             D2.data[partition_size[tid - 1] + i].value = items[tid][i].second;
          }
       }
 
    }
+   auto end4 = std::chrono::high_resolution_clock::now();
+   auto elapsed4 = std::chrono::duration_cast<std::chrono::nanoseconds>(end4 - begin4);
+   std::cout << "Third pragma " << (1e-6 * elapsed4.count()) <<  " ms" << std::endl;
+
+   // int globalIndex = 0, tid = 0, tIndex = 0;
+   // while(globalIndex < D2.ndata) {
+   //    if(tIndex < partitions[tid].size()) {
+   //       D2.data[globalIndex].key = items[tid][tIndex].first;
+   //       D2.data[globalIndex].value = items[tid][tIndex].second;
+   //       tIndex ++;
+   //       globalIndex ++;
+   //    }
+   //    else {
+   //       tid ++;
+   //       tIndex = 0;
+   //    }
+   // }
    return D2;
 }
