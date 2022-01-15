@@ -122,7 +122,6 @@ Data classify(Data &D, const Ranges &R, unsigned int numt)
       for(int i=tid; i<D.ndata; i+=numt) { // Threads together share-loop through all of Data
          int v = range[tid][i / numt] = R.range(D.data[i].key);// For each data, find the interval of data's key,
 							                                          // and store the interval id in value. D is changed.
-         // int v = D.data[i].value = R.range(D.data[i].key);
          counts[tid][v] ++;
       }
    }
@@ -148,9 +147,16 @@ Data classify(Data &D, const Ranges &R, unsigned int numt)
    auto begin1 = std::chrono::high_resolution_clock::now();
    // Accumulate all sub-counts (in each interval's counter) into rangecount
    unsigned int *rangecount = new unsigned int[R.num()]();
+   std::vector<int> partition_size(numt, 0);
+   int p = -1;
    for(int t = 0; t < numt; t ++) {
       for(int r = 1; r < R.num(); r ++) {
-         rangecount[r] += counts[t][r];
+         rangecount[r] += counts[t][r];   
+         if(r / (R.num() / numt) >= numt)
+            p = numt - 1;
+         else
+            p = r / (R.num() / numt);
+         partition_size[p] += counts[t][r];
       }
    }
    for(int r = 1; r < R.num(); r ++) {
@@ -164,35 +170,43 @@ Data classify(Data &D, const Ranges &R, unsigned int numt)
    
    auto begin2 = std::chrono::high_resolution_clock::now();
    std::vector<std::vector<std::pair<int, int>>> partitions(numt, std::vector<std::pair<int, int>>(0));
-   // std::vector<std::vector<Item>> partitions(numt, std::vector<Item>(0));
-   std::vector<int> partition_size(numt, 0);
+   for(int i = 0; i < numt; i ++) {
+      partitions[i].resize(partition_size[i]);
+   }
+   std::vector<int> threadIndex(numt, 0);
    for(int i = 0; i < D.ndata; i ++) {
+      //int r = 1, p = -1;
       int r = range[i % numt][i / numt], p = -1;
       // int r = range[(i / k) % numt][(i / (k * numt)) * k + i % k], p = -1;
       if(r / (R.num() / numt) >= numt)
          p = numt - 1;
       else
          p = r / (R.num() / numt);
-      if(partition_size[p] == partitions[p].size())
-         partitions[p].push_back({D.data[i].key, r});
-         // partitions[p].push_back(Item(D.data[i].key, r));
-      else
-         partitions[p][partition_size[p]] = {D.data[i].key, r};
-         // partitions[p][partition_size[p]] = Item(D.data[i].key, r);
-      partition_size[p] ++;
+      // if(partition_size[p] == partitions[p].size())
+      //    partitions[p].push_back({D.data[i].key, r});
+      //    // partitions[p].push_back(Item(D.data[i].key, r));
+      // else
+      //    partitions[p][partition_size[p]] = {D.data[i].key, r};
+      //    // partitions[p][partition_size[p]] = Item(D.data[i].key, r);
+      //partition_size[p] ++;
+      partitions[p][threadIndex[p] ++] = {D.data[i].key, r};
+
    }
    auto end2 = std::chrono::high_resolution_clock::now();
    auto elapsed2 = std::chrono::duration_cast<std::chrono::nanoseconds>(end2 - begin2);
    std::cout << "Partition determination " << (1e-6 * elapsed2.count()) <<  " ms" << std::endl;
 
    Data D2 = Data(D.ndata); // Make a copy
+   auto begin5 = std::chrono::high_resolution_clock::now();
    std::vector<std::vector<std::pair<int, int>>> items(numt, std::vector<std::pair<int, int>>(0));
-   // std::vector<std::vector<Item>> items(numt, std::vector<Item>(0));  
    for(int i = 0; i < numt; i ++) {
       items[i].resize(partition_size[i]);
       if(i != 0) 
          partition_size[i] += partition_size[i - 1];
    }
+   auto end5 = std::chrono::high_resolution_clock::now();
+   auto elapsed5 = std::chrono::duration_cast<std::chrono::nanoseconds>(end5 - begin5);
+   std::cout << "Dummy " << (1e-6 * elapsed5.count()) <<  " ms" << std::endl;
    
    auto begin3 = std::chrono::high_resolution_clock::now();
    #pragma omp parallel num_threads(numt)
