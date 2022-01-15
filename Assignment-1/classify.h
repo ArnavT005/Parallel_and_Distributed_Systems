@@ -12,9 +12,6 @@ class Ranges;
 
 Data classify(Data &D, const Ranges &R, unsigned int numt);
 
-// Optimization 1: Try to align counter with 0 (mod 64) address
-//                 to ensure that no two counters are in the same cache line
-
 struct Range { // Integer range
 
    Range(int a, int b);
@@ -50,20 +47,12 @@ class Ranges {
       bool newrange(const Range r);
 };
 
-struct Item {
-   int key;
-   int value;
-   Item() {
-      key = 0;
-      value = -1;
-   }
-   Item(int key, int value) {
-      this->key = key;
-      this->value = value;
-   }
-};
-
 struct Data {
+
+   struct Item {
+      int key;
+      int value = -1;
+   };
 
    unsigned int ndata = 0;
    Item *data = NULL;

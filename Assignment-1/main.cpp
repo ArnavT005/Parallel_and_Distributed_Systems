@@ -11,8 +11,7 @@ float timedwork(Data &D, const Ranges &R, unsigned int numt)
    Data D2 = classify(D, R, numt);
    auto end = std::chrono::high_resolution_clock::now();
    auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
-   // return(1e-6 * elapsed.count());
-   D2.inspect();
+   //D2.inspect();
    return(1e-6 * (std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin)).count());
    // return mssince();
 }
