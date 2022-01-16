@@ -1,0 +1,89 @@
+Performance counter stats for './classify rfile dfile 1009072 4 3':
+
+          1,355.28 msec task-clock                #    3.295 CPUs utilized          
+                62      context-switches          #    0.046 K/sec                  
+                 3      cpu-migrations            #    0.002 K/sec                  
+            24,533      page-faults               #    0.018 M/sec                  
+    4,98,42,87,934      cycles                    #    3.678 GHz                      (48.57%)
+   15,52,64,60,019      instructions              #    3.12  insn per cycle           (63.46%)
+    6,02,66,68,763      branches                  # 4446.809 M/sec                    (63.67%)
+         32,09,853      branch-misses             #    0.05% of all branches          (64.73%)
+    3,35,03,81,419      L1-dcache-loads           # 2472.097 M/sec                    (63.86%)
+         78,95,428      L1-dcache-load-misses     #    0.24% of all L1-dcache accesses  (63.45%)
+          4,94,238      LLC-loads                 #    0.365 M/sec                    (48.96%)
+          1,75,484      LLC-load-misses           #   35.51% of all LL-cache accesses  (48.15%)
+
+       0.411312432 seconds time elapsed
+
+       1.336563000 seconds user
+       0.019889000 seconds sys
+
+=================================================
+            Trace Event Information              
+=================================================
+  Total records                     :       2050
+  Locked Load/Store Operations      :         30
+  Load Operations                   :        369
+  Loads - uncacheable               :          0
+  Loads - IO                        :          0
+  Loads - Miss                      :          0
+  Loads - no mapping                :          2
+  Load Fill Buffer Hit              :        124
+  Load L1D hit                      :        195
+  Load L2D hit                      :          3
+  Load LLC hit                      :         37
+  Load Local HITM                   :          0
+  Load Remote HITM                  :          0
+  Load Remote HIT                   :          0
+  Load Local DRAM                   :          8
+  Load Remote DRAM                  :          0
+  Load MESI State Exclusive         :          0
+  Load MESI State Shared            :          8
+  Load LLC Misses                   :          8
+  LLC Misses to Local DRAM          :      100.0%
+  LLC Misses to Remote DRAM         :        0.0%
+  LLC Misses to Remote cache (HIT)  :        0.0%
+  LLC Misses to Remote cache (HITM) :        0.0%
+  Store Operations                  :       1681
+  Store - uncacheable               :          0
+  Store - no mapping                :          2
+  Store L1D Hit                     :       1668
+  Store L1D Miss                    :         11
+  No Page Map Rejects               :        336
+  Unable to parse data source       :          0
+
+=================================================
+    Global Shared Cache Line Event Information   
+=================================================
+  Total Shared Cache Lines          :          0
+  Load HITs on shared lines         :          0
+  Fill Buffer Hits on shared lines  :          0
+  L1D hits on shared lines          :          0
+  L2D hits on shared lines          :          0
+  LLC hits on shared lines          :          0
+  Locked Access on shared lines     :          0
+  Store HITs on shared lines        :          0
+  Store L1D hits on shared lines    :          0
+  Total Merged records              :          0
+
+=================================================
+                 c2c details                     
+=================================================
+  Events                            : cpu/mem-loads,ldlat=30/P
+                                    : cpu/mem-stores/P
+  Cachelines sort on                : Total HITMs
+  Cacheline data grouping           : offset,iaddr
+
+=================================================
+           Shared Data Cache Line Table          
+=================================================
+#
+#        ----------- Cacheline ----------      Tot  ------- Load Hitm -------    Total    Total    Total  ---- Stores ----  ----- Core Load Hit -----  - LLC Load Hit --  - RMT Load Hit --  --- Load Dram ----
+# Index             Address  Node  PA cnt     Hitm    Total  LclHitm  RmtHitm  records    Loads   Stores    L1Hit   L1Miss       FB       L1       L2    LclHit  LclHitm    RmtHit  RmtHitm       Lcl       Rmt
+# .....  ..................  ....  ......  .......  .......  .......  .......  .......  .......  .......  .......  .......  .......  .......  .......  ........  .......  ........  .......  ........  ........
+#
+
+=================================================
+      Shared Cache Line Distribution Pareto      
+=================================================
+#

@@ -1,0 +1,350 @@
+==31122== Cachegrind, a cache and branch-prediction profiler
+==31122== Copyright (C) 2002-2017, and GNU GPL'd, by Nicholas Nethercote et al.
+==31122== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==31122== Command: ./classify rfile dfile 1009072 4 3
+==31122== 
+--31122-- warning: L3 cache found, using its data for the LL simulation.
+11174.2 ms
+==31122== brk segment overflow in thread #1: can't grow to 0x4911000
+==31122== (see section Limitations in user manual)
+==31122== NOTE: further instances of this message will not be shown
+11112.2 ms
+11148.4 ms
+3 iterations of 1009072 items in 1001 ranges with 4 threads: Fastest took 11112.2 ms, Average was 11144.9 ms
+==31122== 
+==31122== I   refs:      16,276,071,492
+==31122== I1  misses:             3,927
+==31122== LLi misses:             3,763
+==31122== I1  miss rate:           0.00%
+==31122== LLi miss rate:           0.00%
+==31122== 
+==31122== D   refs:       3,511,165,205  (3,361,308,973 rd   + 149,856,232 wr)
+==31122== D1  misses:         6,446,177  (    3,051,274 rd   +   3,394,903 wr)
+==31122== LLd misses:         5,877,768  (    2,737,026 rd   +   3,140,742 wr)
+==31122== D1  miss rate:            0.2% (          0.1%     +         2.3%  )
+==31122== LLd miss rate:            0.2% (          0.1%     +         2.1%  )
+==31122== 
+==31122== LL refs:            6,450,104  (    3,055,201 rd   +   3,394,903 wr)
+==31122== LL misses:          5,881,531  (    2,740,789 rd   +   3,140,742 wr)
+==31122== LL miss rate:             0.0% (          0.0%     +         2.1%  )
+
+--------------------------------------------------------------------------------
+I1 cache:         32768 B, 64 B, 8-way associative
+D1 cache:         32768 B, 64 B, 8-way associative
+LL cache:         8388608 B, 64 B, 16-way associative
+Command:          ./classify rfile dfile 1009072 4 3
+Data file:        cachegrind.out.31122
+Events recorded:  Ir I1mr ILmr Dr D1mr DLmr Dw D1mw DLmw
+Events shown:     Ir I1mr ILmr Dr D1mr DLmr Dw D1mw DLmw
+Event sort order: Ir I1mr ILmr Dr D1mr DLmr Dw D1mw DLmw
+Thresholds:       0.1 100 100 100 100 100 100 100 100
+Include dirs:     
+User annotated:   
+Auto-annotation:  on
+
+--------------------------------------------------------------------------------
+Ir             I1mr  ILmr  Dr            D1mr      DLmr      Dw          D1mw      DLmw      
+--------------------------------------------------------------------------------
+16,276,071,492 3,927 3,763 3,361,308,973 3,051,274 2,737,026 149,856,232 3,394,903 3,140,742  PROGRAM TOTALS
+
+--------------------------------------------------------------------------------
+Ir             I1mr ILmr Dr            D1mr      DLmr      Dw         D1mw    DLmw     file:function
+--------------------------------------------------------------------------------
+15,116,191,724    8    8 3,028,689,333     1,503     1,503          0       0       0  /home/snake/Desktop/Parallel_and_Distributed_Systems/Assignment-1/classify.cpp:Ranges::range(int, bool) const
+   519,253,851   36   36   172,281,847       339       210 53,900,944       0       0  ???:std::istreambuf_iterator<char, std::char_traits<char> > std::num_get<char, std::istreambuf_iterator<char, std::char_traits<char> > >::_M_extract_int<long>(std::istreambuf_iterator<char, std::char_traits<char> >, std::istreambuf_iterator<char, std::char_traits<char> >, std::ios_base&, std::_Ios_Iostate&, long&) const
+   165,597,761  710  693    42,731,048     1,169       646  9,103,039     352     306  ???:???
+    75,852,183   39   39     9,135,858   190,049   189,819  9,084,741 378,604 378,592  /home/snake/Desktop/Parallel_and_Distributed_Systems/Assignment-1/classify.cpp:classify(Data&, Ranges const&, unsigned int)
+    62,687,028    9    9    25,276,949        45        41  7,077,639       0       0  ???:std::istream::sentry::sentry(std::istream&, bool)
+    55,609,012    5    5    17,188,240         2         1 10,110,730 126,135   1,775  ???:std::istream::operator>>(int&)
+    48,435,990   14   14    12,109,029   378,847   378,610  3,027,300       9       9  /home/snake/Desktop/Parallel_and_Distributed_Systems/Assignment-1/classify.cpp:classify(Data&, Ranges const&, unsigned int) [clone ._omp_fn.1]
+    42,381,360    5    5     9,081,852 1,514,430 1,418,463  6,054,504 189,206 160,020  /home/snake/Desktop/Parallel_and_Distributed_Systems/Assignment-1/classify.cpp:classify(Data&, Ranges const&, unsigned int) [clone ._omp_fn.0]
+    40,037,310    5    5    10,574,340   378,464   358,963  6,054,468 378,411 378,409  /home/snake/Desktop/Parallel_and_Distributed_Systems/Assignment-1/classify.cpp:classify(Data&, Ranges const&, unsigned int) [clone ._omp_fn.2]
+    18,163,416    0    0             0         0         0          0       0       0  /usr/include/c++/9/bits/stl_uninitialized.h:std::vector<std::pair<int, int>, std::allocator<std::pair<int, int> > >::_M_default_append(unsigned long)
+
+--------------------------------------------------------------------------------
+-- Auto-annotated source: /home/snake/Desktop/Parallel_and_Distributed_Systems/Assignment-1/classify.cpp
+--------------------------------------------------------------------------------
+Ir            I1mr ILmr Dr            D1mr      DLmr      Dw        D1mw    DLmw    
+
+            .    .    .             .         .         .         .       .       .  #include "classify.h"
+            .    .    .             .         .         .         .       .       .  #include <omp.h>
+            .    .    .             .         .         .         .       .       .  #include <vector>
+            .    .    .             .         .         .         .       .       .  #include <utility>
+            .    .    .             .         .         .         .       .       .  #include <chrono>
+            .    .    .             .         .         .         .       .       .  
+        1,000    1    1             0         0         0         0       0       0  Range::Range(int a=1, int b=0) {
+      502,501    0    0             0         0         0   502,501  61,877  61,877     lo = a;
+    1,004,000    1    1             0         0         0   502,500       0       0     hi = b;
+        1,000    0    0         1,000         0         0         0       0       0  }
+            .    .    .             .         .         .         .       .       .  
+            .    .    .             .         .         .         .       .       .  bool Range::within(int val) const {
+6,035,199,372    0    0 3,017,599,686     1,503     1,503         0       0       0        return(lo <= val && val <= hi);
+            .    .    .             .         .         .         .       .       .  }
+            .    .    .             .         .         .         .       .       .  
+            .    .    .             .         .         .         .       .       .  bool Range::strictlyin(int val) const {
+    5,002,998    0    0     2,001,999         0         0         0       0       0        return(lo < val && val < hi);
+            .    .    .             .         .         .         .       .       .  }
+            .    .    .             .         .         .         .       .       .  
+            .    .    .             .         .         .         .       .       .  void Ranges::set(int i, int lo, int hi) {
+            .    .    .             .         .         .         .       .       .     if(i < _num) {
+      501,500    1    1             0         0         0   501,500       0       0        _ranges[i].lo = lo;
+    1,001,000    0    0             0         0         0   500,500       0       0        _ranges[i].hi = hi;
+            .    .    .             .         .         .         .       .       .     }
+            .    .    .             .         .         .         .       .       .  }
+            .    .    .             .         .         .         .       .       .  
+            3    1    1             0         0         0         1       0       0  Ranges::Ranges() {
+            1    0    0             0         0         0         1       0       0     _num = 1;
+            3    0    0             0         0         0         2       0       0     _ranges = new Range(1, 0);
+            2    0    0             2         0         0         0       0       0  }
+            .    .    .             .         .         .         .       .       .  
+        8,000    1    1             0         0         0     5,000       0       0  Ranges& Ranges::operator+=(const Range range){
+        3,000    0    0             0         0         0     1,000       0       0     if(newrange(range)) {
+        1,000    0    0         1,000         0         0         0       0       0        Range *oranges = _ranges;
+    1,018,000    1    1         1,000         0         0     2,000       0       0        _ranges = new Range[_num+1];
+            .    .    .             .         .         .         .       .       .        assert(NULL != _ranges);
+    1,507,500    0    0         1,000         0         0         0       0       0        for(int r=0; r<_num; r++) { 
+    1,001,000    0    0     1,001,000         0         0         0       0       0           set(r, oranges[r].lo, oranges[r].hi);
+            .    .    .             .         .         .         .       .       .        }
+        2,000    0    0             0         0         0     1,000       0       0        set(_num++, range.lo, range.hi);
+            .    .    .             .         .         .         .       .       .     }
+            .    .    .             .         .         .         .       .       .     return *this;
+        7,000    0    0         6,000         0         0         0       0       0  }
+            .    .    .             .         .         .         .       .       .  
+            .    .    .             .         .         .         .       .       .  int Ranges::range_binary(int val, bool strict = false) const {
+            .    .    .             .         .         .         .       .       .     int low = 0, high = _num - 1, mid = 0;
+            .    .    .             .         .         .         .       .       .     if(strict) {
+            .    .    .             .         .         .         .       .       .        while(low <= high) {
+            .    .    .             .         .         .         .       .       .           mid = (low + high) / 2;
+            .    .    .             .         .         .         .       .       .           if(_ranges[mid].strictlyin(val))
+            .    .    .             .         .         .         .       .       .              return mid;
+-- line 51 ----------------------------------------
+-- line 67 ----------------------------------------
+            .    .    .             .         .         .         .       .       .           else {
+            .    .    .             .         .         .         .       .       .              high = mid - 1;
+            .    .    .             .         .         .         .       .       .           }
+            .    .    .             .         .         .         .       .       .        }
+            .    .    .             .         .         .         .       .       .     }
+            .    .    .             .         .         .         .       .       .     return BADRANGE;
+            .    .    .             .         .         .         .       .       .  }
+            .    .    .             .         .         .         .       .       .  
+    3,029,216    4    4             0         0         0         0       0       0  int Ranges::range(int val, bool strict = false) const {
+    9,087,648    0    0     3,029,216         0         0         0       0       0     if(strict) {
+    5,005,000    0    0             0         0         0         0       0       0        for(int r=0; r<_num; r++)
+        8,000    0    0         2,000         0         0         0       0       0           if(_ranges[r].strictlyin(val))
+            .    .    .             .         .         .         .       .       .              return r;
+            .    .    .             .         .         .         .       .       .     } else {
+7,534,917,567    3    3             0         0         0         0       0       0        for(int r=0; r<_num; r++)
+1,517,881,491    0    0     3,027,216         0         0         0       0       0           if(_ranges[r].within(val))
+            .    .    .             .         .         .         .       .       .              return r;
+            .    .    .             .         .         .         .       .       .     }
+        2,000    1    1             0         0         0         0       0       0     return BADRANGE;
+    6,058,432    0    0     3,029,216         0         0         0       0       0  }
+            .    .    .             .         .         .         .       .       .  
+            .    .    .             .         .         .         .       .       .  void Ranges::inspect() {
+            .    .    .             .         .         .         .       .       .     for(int r=0; r<_num; r++) { 
+            .    .    .             .         .         .         .       .       .        std::cout << r << "," << &_ranges[r] << ": " << _ranges[r].lo << ", " << _ranges[r].hi << "\n"; 
+            .    .    .             .         .         .         .       .       .     }
+            .    .    .             .         .         .         .       .       .  }
+            .    .    .             .         .         .         .       .       .  
+        3,027    1    1            26        12         3         0       0       0  int Ranges::num() const { return _num; }
+            .    .    .             .         .         .         .       .       .  
+            .    .    .             .         .         .         .       .       .  
+        2,000    1    1             0         0         0         0       0       0  bool Ranges::newrange(const Range r) {
+       12,000    0    0             0         0         0     2,000       0       0     return (range(r.lo, true) == BADRANGE && range(r.hi, true) == BADRANGE);
+        1,000    0    0         1,000         0         0         0       0       0  }
+            .    .    .             .         .         .         .       .       .  
+    7,063,504    2    2             0         0         0 3,027,216 378,402 378,402  Item::Item() {
+    7,063,504    0    0             0         0         0 4,036,288 126,134 126,134     key = value = -1;
+    1,009,072    0    0     1,009,072         0         0         0       0       0  }
+            .    .    .             .         .         .         .       .       .  
+            .    .    .             .         .         .         .       .       .  Item::Item(int a, int b) {
+            .    .    .             .         .         .         .       .       .     key = a;
+            .    .    .             .         .         .         .       .       .     value = b;
+            .    .    .             .         .         .         .       .       .  }
+            .    .    .             .         .         .         .       .       .  
+            .    .    .             .         .         .         .       .       .  Data classify(Data &D, const Ranges &R, unsigned int numt)
+           39    2    2             3         0         0        27       2       0  {  
+            6    0    0             0         0         0         0       0       0     assert(numt < MAXTHREADS);
+            .    .    .             .         .         .         .       .       .     
+           12    3    3             6         2         0         0       0       0     std::vector<std::vector<unsigned int>> counts(numt, std::vector<unsigned int>(R.num(), 0));
+           21    0    0             6         0         0         0       0       0     std::vector<std::vector<int>> range(numt, std::vector<int>((int)(D.ndata / numt) + 1, 0));
+          216    8    8            90        13        12        81       6       2     #pragma omp parallel num_threads(numt)
+            .    .    .             .         .         .         .       .       .     {
+           12    0    0             0         0         0        12       0       0        int tid = omp_get_thread_num();
+    9,081,684    0    0     3,027,240        12         9         0       0       0        for(int i=tid; i<D.ndata; i+=numt) { 
+   24,217,812    1    1     3,027,276 1,513,635 1,417,756 6,054,432 189,206 160,020           int v = range[tid][i / numt] = R.range(D.data[i].key);
+    9,081,684    0    0     3,027,252       770       686         0       0       0           counts[tid][v] ++;
+            .    .    .             .         .         .         .       .       .        }
+            .    .    .             .         .         .         .       .       .     }
+            .    .    .             .         .         .         .       .       .  
+            .    .    .             .         .         .         .       .       .     // int k = 4;
+            .    .    .             .         .         .         .       .       .     // #pragma omp parallel num_threads(numt)
+            .    .    .             .         .         .         .       .       .     // {
+            .    .    .             .         .         .         .       .       .     //    int tid = omp_get_thread_num(); // I am thread number tid
+            .    .    .             .         .         .         .       .       .     //    int index = k * tid;
+-- line 129 ----------------------------------------
+-- line 133 ----------------------------------------
+            .    .    .             .         .         .         .       .       .     //          counts[tid][v] ++;
+            .    .    .             .         .         .         .       .       .     //       }
+            .    .    .             .         .         .         .       .       .     //       index += k * numt;
+            .    .    .             .         .         .         .       .       .     //    }
+            .    .    .             .         .         .         .       .       .     //    // tid == (index / k) % numt
+            .    .    .             .         .         .         .       .       .     //    // f(index) == (index / (k * numt)) * k + index % k
+            .    .    .             .         .         .         .       .       .     // }
+            .    .    .             .         .         .         .       .       .  
+       12,048    1    1             3         0         0     3,006     185     185     unsigned int *rangecount = new unsigned int[R.num()]();
+            .    .    .             .         .         .         .       .       .     std::vector<int> partition_size(numt, 0);
+            .    .    .             .         .         .         .       .       .     int p = -1;
+           84    3    3             6         3         3         0       0       0     for(int t = 0; t < numt; t ++) {
+       24,024    0    0             0         0         0         0       0       0        for(int r = 1; r < R.num(); r ++) {
+       24,084    2    2        24,012       753       588         0       0       0           rangecount[r] += counts[t][r];   
+       36,000    0    0             0         0         0         0       0       0           if(r / (R.num() / numt) >= numt)
+       24,000    0    0             0         0         0         0       0       0              p = numt - 1;
+            .    .    .             .         .         .         .       .       .           else
+            .    .    .             .         .         .         .       .       .              p = r / (R.num() / numt);
+       36,000    0    0        24,000         0         0         0       0       0           partition_size[p] += counts[t][r];
+            .    .    .             .         .         .         .       .       .        }
+            .    .    .             .         .         .         .       .       .     }
+        6,018    0    0             0         0         0         0       0       0     for(int r = 1; r < R.num(); r ++) {
+        6,000    0    0         6,000         0         0         0       0       0        rangecount[r] += rangecount[r - 1];
+            .    .    .             .         .         .         .       .       .     }
+            .    .    .             .         .         .         .       .       .     
+            .    .    .             .         .         .         .       .       .     std::vector<std::vector<std::pair<int, int>>> partitions(numt, std::vector<std::pair<int, int>>(0));
+           48    0    0             9         9         0         0       0       0     for(int i = 0; i < numt; i ++) {
+           24    2    2            24         3         0         0       0       0        partitions[i].resize(partition_size[i]);
+            .    .    .             .         .         .         .       .       .     }
+            .    .    .             .         .         .         .       .       .     std::vector<int> threadIndex(numt, 0);
+    9,081,675    2    2            15         9         6         3       0       0     for(int i = 0; i < D.ndata; i ++) {
+   21,190,515    3    3     6,054,435   189,216   189,211         0       0       0        int r = range[i % numt][i / numt], p = -1;
+            .    .    .             .         .         .         .       .       .        // int r = range[(i / k) % numt][(i / (k * numt)) * k + i % k], p = -1;
+    9,081,666    2    2             6         0         0         3       0       0        if(r / (R.num() / numt) >= numt)
+    9,081,654    0    0             0         0         0         0       0       0           p = numt - 1;
+            .    .    .             .         .         .         .       .       .        else
+            .    .    .             .         .         .         .       .       .           p = r / (R.num() / numt);
+   15,136,101    0    0     3,027,228         3         0 3,027,219       0       0        partitions[p][threadIndex[p] ++] = {D.data[i].key, r};
+            .    .    .             .         .         .         .       .       .     }
+            .    .    .             .         .         .         .       .       .  
+            .    .    .             .         .         .         .       .       .     Data D2 = Data(D.ndata); // Make a copy
+            .    .    .             .         .         .         .       .       .     
+            .    .    .             .         .         .         .       .       .     std::vector<std::vector<std::pair<int, int>>> items(numt, std::vector<std::pair<int, int>>(0));
+           60    0    0             9         9         0         0       0       0     for(int i = 0; i < numt; i ++) {
+           24    2    2            24        12         6         0       0       0        items[i].resize(partition_size[i]);
+           24    0    0             0         0         0         0       0       0        if(i != 0) 
+           27    0    0            27        18         0         0       0       0           partition_size[i] += partition_size[i - 1];
+            .    .    .             .         .         .         .       .       .     }
+            .    .    .             .         .         .         .       .       .     
+          258   12   12           102        27         2        90       6       3     #pragma omp parallel num_threads(numt)
+            .    .    .             .         .         .         .       .       .     {
+           24    0    0             0         0         0        12       9       9        int tid = omp_get_thread_num();
+          108    0    0             0         0         0         0       0       0        int lower = tid * (R.num() / numt), upper = (tid + 1 == numt) ? R.num() : (tid + 1) * (R.num() / numt);
+           24    3    3             0         0         0         0       0       0        std::vector<int> rangeIndex(upper - lower, 0);
+           54    2    2             9         6         3         0       0       0        int temp = (lower == 0) ? 0 : rangecount[lower - 1];
+    6,054,480    0    0            24         9         1         0       0       0        for(int i = 0; i < partitions[tid].size(); i ++) {
+    3,027,216    2    2     3,027,216   378,414   378,413         0       0       0           int r = partitions[tid][i].second;
+    6,054,432    1    1             0         0         0         0       0       0           if(r == -1) 
+            .    .    .             .         .         .         .       .       .              break;
+   33,299,412    0    0     9,081,660       382       190 3,027,216       0       0           items[tid][rangecount[r - 1] - temp + rangeIndex[r - lower] ++] = {partitions[tid][i].first, r};
+            .    .    .             .         .         .         .       .       .        } 
+            .    .    .             .         .         .         .       .       .     }
+            .    .    .             .         .         .         .       .       .  
+          138    4    4            36        15         0        36       3       0     #pragma omp parallel num_threads(numt)
+            .    .    .             .         .         .         .       .       .     {
+           12    0    0             0         0         0        12       0       0        int tid = omp_get_thread_num();
+    6,054,492    3    3            24        18         6         0       0       0        for(int i = 0; i < items[tid].size(); i ++) {
+   12,108,864    0    0     6,054,432   378,413   358,952         0       0       0           if(tid == 0) {
+      767,310    0    0             0         0         0   767,310  95,916  95,915              D2.data[i].key = items[tid][i].first;
+      767,310    0    0             0         0         0   767,310       0       0              D2.data[i].value = items[tid][i].second;
+            .    .    .             .         .         .         .       .       .           }
+            .    .    .             .         .         .         .       .       .           else {
+    9,039,684    0    0     2,259,942        18         5 2,259,906 282,495 282,494              D2.data[partition_size[tid - 1] + i].key = items[tid][i].first;
+   11,299,530    0    0     2,259,906         0         0 2,259,906       0       0              D2.data[partition_size[tid - 1] + i].value = items[tid][i].second;
+            .    .    .             .         .         .         .       .       .           }
+            .    .    .             .         .         .         .       .       .        }
+            .    .    .             .         .         .         .       .       .     }
+            .    .    .             .         .         .         .       .       .  
+            .    .    .             .         .         .         .       .       .     // int globalIndex = 0, tid = 0, tIndex = 0;
+            .    .    .             .         .         .         .       .       .     // while(globalIndex < D2.ndata) {
+            .    .    .             .         .         .         .       .       .     //    if(tIndex < partitions[tid].size()) {
+            .    .    .             .         .         .         .       .       .     //       D2.data[globalIndex].key = items[tid][tIndex].first;
+-- line 214 ----------------------------------------
+-- line 216 ----------------------------------------
+            .    .    .             .         .         .         .       .       .     //       tIndex ++;
+            .    .    .             .         .         .         .       .       .     //       globalIndex ++;
+            .    .    .             .         .         .         .       .       .     //    }
+            .    .    .             .         .         .         .       .       .     //    else {
+            .    .    .             .         .         .         .       .       .     //       tid ++;
+            .    .    .             .         .         .         .       .       .     //       tIndex = 0;
+            .    .    .             .         .         .         .       .       .     //    }
+            .    .    .             .         .         .         .       .       .     // }
+           12    0    0             6         3         0         0       0       0     return D2;
+           36    3    3            27         6         3         0       0       0  }
+
+--------------------------------------------------------------------------------
+-- Auto-annotated source: /usr/include/c++/9/bits/stl_uninitialized.h
+--------------------------------------------------------------------------------
+Ir         I1mr ILmr Dr D1mr DLmr Dw D1mw DLmw 
+
+-- line 213 ----------------------------------------
+         .    .    .  .    .    .  .    .    .        template<typename _ForwardIterator, typename _Size, typename _Tp>
+         .    .    .  .    .    .  .    .    .          static _ForwardIterator
+         .    .    .  .    .    .  .    .    .          __uninit_fill_n(_ForwardIterator __first, _Size __n,
+         .    .    .  .    .    .  .    .    .  			const _Tp& __x)
+         .    .    .  .    .    .  .    .    .          {
+         .    .    .  .    .    .  .    .    .  	  _ForwardIterator __cur = __first;
+         .    .    .  .    .    .  .    .    .  	  __try
+         .    .    .  .    .    .  .    .    .  	    {
+       153    2    2  0    0    0  0    0    0  	      for (; __n > 0; --__n, (void) ++__cur)
+         .    .    .  .    .    .  .    .    .  		std::_Construct(std::__addressof(*__cur), __x);
+         .    .    .  .    .    .  .    .    .  	      return __cur;
+         .    .    .  .    .    .  .    .    .  	    }
+         .    .    .  .    .    .  .    .    .  	  __catch(...)
+         .    .    .  .    .    .  .    .    .  	    {
+         .    .    .  .    .    .  .    .    .  	      std::_Destroy(__first, __cur);
+         .    .    .  .    .    .  .    .    .  	      __throw_exception_again;
+         .    .    .  .    .    .  .    .    .  	    }
+-- line 229 ----------------------------------------
+-- line 536 ----------------------------------------
+         .    .    .  .    .    .  .    .    .      {
+         .    .    .  .    .    .  .    .    .        template<typename _ForwardIterator, typename _Size>
+         .    .    .  .    .    .  .    .    .          static _ForwardIterator
+         .    .    .  .    .    .  .    .    .          __uninit_default_n(_ForwardIterator __first, _Size __n)
+         .    .    .  .    .    .  .    .    .          {
+         .    .    .  .    .    .  .    .    .  	  _ForwardIterator __cur = __first;
+         .    .    .  .    .    .  .    .    .  	  __try
+         .    .    .  .    .    .  .    .    .  	    {
+18,163,320    0    0  0    0    0  0    0    0  	      for (; __n > 0; --__n, (void) ++__cur)
+         .    .    .  .    .    .  .    .    .  		std::_Construct(std::__addressof(*__cur));
+         .    .    .  .    .    .  .    .    .  	      return __cur;
+         .    .    .  .    .    .  .    .    .  	    }
+         .    .    .  .    .    .  .    .    .  	  __catch(...)
+         .    .    .  .    .    .  .    .    .  	    {
+         .    .    .  .    .    .  .    .    .  	      std::_Destroy(__first, __cur);
+         .    .    .  .    .    .  .    .    .  	      __throw_exception_again;
+         .    .    .  .    .    .  .    .    .  	    }
+-- line 552 ----------------------------------------
+-- line 940 ----------------------------------------
+         .    .    .  .    .    .  .    .    .  					       __alloc)))
+         .    .    .  .    .    .  .    .    .      {
+         .    .    .  .    .    .  .    .    .        typedef typename iterator_traits<_InputIterator>::value_type
+         .    .    .  .    .    .  .    .    .  	_ValueType;
+         .    .    .  .    .    .  .    .    .        typedef typename iterator_traits<_ForwardIterator>::value_type
+         .    .    .  .    .    .  .    .    .  	_ValueType2;
+         .    .    .  .    .    .  .    .    .        static_assert(std::is_same<_ValueType, _ValueType2>::value,
+         .    .    .  .    .    .  .    .    .  	  "relocation is only possible for values of the same type");
+        24    0    0  0    0    0  0    0    0        _ForwardIterator __cur = __result;
+        72    0    0  0    0    0  0    0    0        for (; __first != __last; ++__first, (void)++__cur)
+         .    .    .  .    .    .  .    .    .  	std::__relocate_object_a(std::__addressof(*__cur),
+         .    .    .  .    .    .  .    .    .  				 std::__addressof(*__first), __alloc);
+         .    .    .  .    .    .  .    .    .        return __cur;
+         .    .    .  .    .    .  .    .    .      }
+         .    .    .  .    .    .  .    .    .  
+         .    .    .  .    .    .  .    .    .    template <typename _InputIterator, typename _ForwardIterator,
+         .    .    .  .    .    .  .    .    .  	    typename _Allocator>
+         .    .    .  .    .    .  .    .    .      inline _ForwardIterator
+-- line 957 ----------------------------------------
+
+--------------------------------------------------------------------------------
+Ir             I1mr ILmr Dr            D1mr      DLmr      Dw         D1mw      DLmw      
+--------------------------------------------------------------------------------
+15,350,662,868   81   81 3,071,611,488 2,463,293 2,347,358 27,248,090 1,134,241 1,105,041  events annotated
+
