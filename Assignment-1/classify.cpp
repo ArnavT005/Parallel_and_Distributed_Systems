@@ -112,7 +112,7 @@ Data classify(Data &D, const Ranges &R, unsigned int numt)
    assert(numt < MAXTHREADS);
    
    std::vector<std::vector<unsigned int>> counts(numt, std::vector<unsigned int>(R.num(), 0));
-   //std::vector<std::vector<int>> range(numt, std::vector<int>((int)(D.ndata / numt) + 1, 0));
+   // std::vector<std::vector<int>> range(numt, std::vector<int>((int)(D.ndata / numt) + 1, 0));
    // #pragma omp parallel num_threads(numt)
    // {
    //    int tid = omp_get_thread_num();
