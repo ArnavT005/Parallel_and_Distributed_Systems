@@ -112,31 +112,31 @@ Data classify(Data &D, const Ranges &R, unsigned int numt)
    assert(numt < MAXTHREADS);
    
    std::vector<std::vector<unsigned int>> counts(numt, std::vector<unsigned int>(R.num(), 0));
-   std::vector<std::vector<int>> range(numt, std::vector<int>((int)(D.ndata / numt) + 1, 0));
-   #pragma omp parallel num_threads(numt)
-   {
-      int tid = omp_get_thread_num();
-      for(int i=tid; i<D.ndata; i+=numt) { 
-         int v = range[tid][i / numt] = R.range(D.data[i].key);
-         counts[tid][v] ++;
-      }
-   }
-
-   // int k = 4;
+   //std::vector<std::vector<int>> range(numt, std::vector<int>((int)(D.ndata / numt) + 1, 0));
    // #pragma omp parallel num_threads(numt)
    // {
-   //    int tid = omp_get_thread_num(); // I am thread number tid
-   //    int index = k * tid;
-   //    while(index < D.ndata) {
-   //       for(int j = index; j < (index + k) && j < D.ndata; j ++) {
-   //          int v = range[tid][(j / (k * numt)) * k + j % k] = R.range(D.data[j].key);
-   //          counts[tid][v] ++;
-   //       }
-   //       index += k * numt;
+   //    int tid = omp_get_thread_num();
+   //    for(int i=tid; i<D.ndata; i+=numt) { 
+   //       // int v = range[tid][i / numt] = R.range(D.data[i].key);
+   //       int v = D.data[i].value = R.range(D.data[i].key);
+   //       counts[tid][v] ++;
    //    }
-   //    // tid == (index / k) % numt
-   //    // f(index) == (index / (k * numt)) * k + index % k
    // }
+
+   int k = 12;
+   #pragma omp parallel num_threads(numt)
+   {
+      int tid = omp_get_thread_num(); // I am thread number tid
+      int index = k * tid;
+      while(index < D.ndata) {
+         for(int j = index; j < (index + k) && j < D.ndata; j ++) {
+            // int v = range[tid][(j / (k * numt)) * k + j % k] = R.range(D.data[j].key);
+            int v = D.data[j].value = R.range(D.data[j].key);
+            counts[tid][v] ++;
+         }
+         index += k * numt;
+      }
+   }
 
    unsigned int *rangecount = new unsigned int[R.num()]();
    std::vector<int> partition_size(numt, 0);
@@ -161,7 +161,8 @@ Data classify(Data &D, const Ranges &R, unsigned int numt)
    }
    std::vector<int> threadIndex(numt, 0);
    for(int i = 0; i < D.ndata; i ++) {
-      int r = range[i % numt][i / numt], p = -1;
+      // int r = range[i % numt][i / numt], p = -1;
+      int r = D.data[i].value, p = -1;
       // int r = range[(i / k) % numt][(i / (k * numt)) * k + i % k], p = -1;
       if(r / (R.num() / numt) >= numt)
          p = numt - 1;
@@ -207,7 +208,6 @@ Data classify(Data &D, const Ranges &R, unsigned int numt)
          }
       }
    }
-
    // int globalIndex = 0, tid = 0, tIndex = 0;
    // while(globalIndex < D2.ndata) {
    //    if(tIndex < partitions[tid].size()) {
