@@ -1,67 +1,67 @@
 Performance counter stats for './classify rfile dfile 1009072 4 3':
 
-       1362.261611      task-clock:u (msec)       #    2.754 CPUs utilized          
+       1579.972389      task-clock:u (msec)       #    2.310 CPUs utilized          
                  0      context-switches:u        #    0.000 K/sec                  
                  0      cpu-migrations:u          #    0.000 K/sec                  
-             21108      page-faults:u             #    0.015 M/sec                  
-        3269389263      cycles:u                  #    2.400 GHz                    
-       11695879469      instructions:u            #    3.58  insn per cycle         
-        4781713795      branches:u                # 3510.129 M/sec                  
-           3209853      branch-misses:u           #    0.07% of all branches        
-        3322758888      L1-dcache-loads:u         # 2439.149 M/sec                  
-           4324038      L1-dcache-load-misses:u   #    0.13% of all L1-dcache hits  
-            353853      LLC-loads:u               #    0.260 M/sec                  
-             60095      LLC-load-misses:u         #   16.98% of all LL-cache hits   
+              9308      page-faults:u             #    0.006 M/sec                  
+        3347853894      cycles:u                  #    2.119 GHz                    
+       11605996070      instructions:u            #    3.47  insn per cycle         
+        4779828584      branches:u                # 3025.261 M/sec                  
+           3227616      branch-misses:u           #    0.07% of all branches        
+        3332396636      L1-dcache-loads:u         # 2109.149 M/sec                  
+           4190805      L1-dcache-load-misses:u   #    0.13% of all L1-dcache hits  
+            484744      LLC-loads:u               #    0.307 M/sec                  
+            217781      LLC-load-misses:u         #   44.93% of all LL-cache hits   
 
-       0.494701757 seconds time elapsed
+       0.683931409 seconds time elapsed
 
 =================================================
             Trace Event Information              
 =================================================
-  Total records                     :      12892
-  Locked Load/Store Operations      :        139
-  Load Operations                   :       1369
-  Loads - uncacheable               :        556
+  Total records                     :       4190
+  Locked Load/Store Operations      :         19
+  Load Operations                   :        342
+  Loads - uncacheable               :          1
   Loads - IO                        :          0
   Loads - Miss                      :          0
-  Loads - no mapping                :          8
-  Load Fill Buffer Hit              :        274
-  Load L1D hit                      :        371
-  Load L2D hit                      :          7
-  Load LLC hit                      :        122
-  Load Local HITM                   :          3
+  Loads - no mapping                :          0
+  Load Fill Buffer Hit              :        186
+  Load L1D hit                      :         55
+  Load L2D hit                      :          3
+  Load LLC hit                      :         85
+  Load Local HITM                   :         12
   Load Remote HITM                  :          0
   Load Remote HIT                   :          0
-  Load Local DRAM                   :         31
+  Load Local DRAM                   :         12
   Load Remote DRAM                  :          0
   Load MESI State Exclusive         :          0
-  Load MESI State Shared            :         31
-  Load LLC Misses                   :         31
+  Load MESI State Shared            :         12
+  Load LLC Misses                   :         12
   LLC Misses to Local DRAM          :      100.0%
   LLC Misses to Remote DRAM         :        0.0%
   LLC Misses to Remote cache (HIT)  :        0.0%
   LLC Misses to Remote cache (HITM) :        0.0%
-  Store Operations                  :      11523
+  Store Operations                  :       3848
   Store - uncacheable               :          0
-  Store - no mapping                :          2
-  Store L1D Hit                     :      11392
-  Store L1D Miss                    :        129
-  No Page Map Rejects               :       9293
+  Store - no mapping                :          0
+  Store L1D Hit                     :       3808
+  Store L1D Miss                    :         40
+  No Page Map Rejects               :        310
   Unable to parse data source       :          0
 
 =================================================
     Global Shared Cache Line Event Information   
 =================================================
-  Total Shared Cache Lines          :          3
-  Load HITs on shared lines         :          3
+  Total Shared Cache Lines          :         12
+  Load HITs on shared lines         :         12
   Fill Buffer Hits on shared lines  :          0
   L1D hits on shared lines          :          0
   L2D hits on shared lines          :          0
-  LLC hits on shared lines          :          3
+  LLC hits on shared lines          :         12
   Locked Access on shared lines     :          0
   Store HITs on shared lines        :          0
   Store L1D hits on shared lines    :          0
-  Total Merged records              :          3
+  Total Merged records              :         12
 
 =================================================
                  c2c details                     
@@ -79,29 +79,83 @@ Performance counter stats for './classify rfile dfile 1009072 4 3':
 # Index             Address  Node  PA cnt     Hitm    Total  LclHitm  RmtHitm  records    Loads   Stores    L1Hit   L1Miss       FB       L1       L2    LclHit  LclHitm    RmtHit  RmtHitm       Lcl       Rmt
 # .....  ..................  ....  ......  .......  .......  .......  .......  .......  .......  .......  .......  .......  .......  .......  .......  ........  .......  ........  .......  ........  ........
 #
-      0  0xffff99112e42d340     0       1   33.33%        1        1        0        1        1        0        0        0        0        0        0         0        1         0        0         0         0
-      1      0x7f801b3842c0     0       1   33.33%        1        1        0        1        1        0        0        0        0        0        0         0        1         0        0         0         0
-      2      0x7f801b39dbc0     0       1   33.33%        1        1        0        1        1        0        0        0        0        0        0         0        1         0        0         0         0
+      0      0x7f3b825974c0     0       1    8.33%        1        1        0        1        1        0        0        0        0        0        0         0        1         0        0         0         0
+      1      0x7f3b8267ce00     0       1    8.33%        1        1        0        1        1        0        0        0        0        0        0         0        1         0        0         0         0
+      2      0x7f3b8269dcc0     0       1    8.33%        1        1        0        1        1        0        0        0        0        0        0         0        1         0        0         0         0
+      3      0x7f3b826b3d40     0       1    8.33%        1        1        0        1        1        0        0        0        0        0        0         0        1         0        0         0         0
+      4      0x7f3b826d4080     0       1    8.33%        1        1        0        1        1        0        0        0        0        0        0         0        1         0        0         0         0
+      5      0x7f3b82723c40     0       1    8.33%        1        1        0        1        1        0        0        0        0        0        0         0        1         0        0         0         0
+      6      0x7f3b827ab9c0     0       1    8.33%        1        1        0        1        1        0        0        0        0        0        0         0        1         0        0         0         0
+      7      0x7f3b828f0740     0       1    8.33%        1        1        0        1        1        0        0        0        0        0        0         0        1         0        0         0         0
+      8      0x7f3b829238c0     0       1    8.33%        1        1        0        1        1        0        0        0        0        0        0         0        1         0        0         0         0
+      9      0x7f3b829fd0c0     0       1    8.33%        1        1        0        1        1        0        0        0        0        0        0         0        1         0        0         0         0
+     10      0x7f3b82c77100     0       1    8.33%        1        1        0        1        1        0        0        0        0        0        0         0        1         0        0         0         0
+     11      0x7f3b82ccf0c0     0       1    8.33%        1        1        0        1        1        0        0        0        0        0        0         0        1         0        0         0         0
 
 =================================================
       Shared Cache Line Distribution Pareto      
 =================================================
 #
-# ----- HITM -----  -- Store Refs --  ------- CL --------                      ---------- cycles ----------    Total       cpu                                    Shared                   
-# RmtHitm  LclHitm   L1 Hit  L1 Miss    Off  Node  PA cnt        Code address  rmt hitm  lcl hitm      load  records       cnt                  Symbol            Object  Source:Line  Node
-# .......  .......  .......  .......  .....  ....  ......  ..................  ........  ........  ........  .......  ........  ......................  ................  ...........  ....
+# ----- HITM -----  -- Store Refs --  ------- CL --------                      ---------- cycles ----------    Total       cpu                  Shared                        
+# RmtHitm  LclHitm   L1 Hit  L1 Miss    Off  Node  PA cnt        Code address  rmt hitm  lcl hitm      load  records       cnt        Symbol    Object       Source:Line  Node
+# .......  .......  .......  .......  .....  ....  ......  ..................  ........  ........  ........  .......  ........  ............  ........  ................  ....
 #
   -------------------------------------------------------------
-      0        0        1        0        0  0xffff99112e42d340
+      0        0        1        0        0      0x7f3b825974c0
   -------------------------------------------------------------
-    0.00%  100.00%    0.00%    0.00%    0x0     0       1  0xffffffff8258f1b0         0       105         0        1         1  [k] 0xffffffff8258f1b0  [unknown]         ??:0          0
+    0.00%  100.00%    0.00%    0.00%    0x0     0       1      0x5604d4f38620         0       114         0        1         1  [.] classify  classify  classify.cpp:122   0
 
   -------------------------------------------------------------
-      1        0        1        0        0      0x7f801b3842c0
+      1        0        1        0        0      0x7f3b8267ce00
   -------------------------------------------------------------
-    0.00%  100.00%    0.00%    0.00%   0x10     0       1      0x555fcd6c87c0         0       108         0        1         1  [.] classify  classify  classify.cpp:134   0
+    0.00%  100.00%    0.00%    0.00%    0x0     0       1      0x5604d4f38620         0       108         0        1         1  [.] classify  classify  classify.cpp:122   0
 
   -------------------------------------------------------------
-      2        0        1        0        0      0x7f801b39dbc0
+      2        0        1        0        0      0x7f3b8269dcc0
   -------------------------------------------------------------
-    0.00%  100.00%    0.00%    0.00%   0x30     0       1      0x555fcd6c87c0         0       117         0        1         1  [.] classify  classify  classify.cpp:134   0
+    0.00%  100.00%    0.00%    0.00%   0x30     0       1      0x5604d4f38620         0       111         0        1         1  [.] classify  classify  classify.cpp:122   0
+
+  -------------------------------------------------------------
+      3        0        1        0        0      0x7f3b826b3d40
+  -------------------------------------------------------------
+    0.00%  100.00%    0.00%    0.00%   0x30     0       1      0x5604d4f38620         0       117         0        1         1  [.] classify  classify  classify.cpp:122   0
+
+  -------------------------------------------------------------
+      4        0        1        0        0      0x7f3b826d4080
+  -------------------------------------------------------------
+    0.00%  100.00%    0.00%    0.00%   0x30     0       1      0x5604d4f38620         0       129         0        1         1  [.] classify  classify  classify.cpp:122   0
+
+  -------------------------------------------------------------
+      5        0        1        0        0      0x7f3b82723c40
+  -------------------------------------------------------------
+    0.00%  100.00%    0.00%    0.00%   0x30     0       1      0x5604d4f38620         0        96         0        1         1  [.] classify  classify  classify.cpp:122   0
+
+  -------------------------------------------------------------
+      6        0        1        0        0      0x7f3b827ab9c0
+  -------------------------------------------------------------
+    0.00%  100.00%    0.00%    0.00%   0x30     0       1      0x5604d4f38620         0        95         0        1         1  [.] classify  classify  classify.cpp:122   0
+
+  -------------------------------------------------------------
+      7        0        1        0        0      0x7f3b828f0740
+  -------------------------------------------------------------
+    0.00%  100.00%    0.00%    0.00%   0x30     0       1      0x5604d4f38620         0        99         0        1         1  [.] classify  classify  classify.cpp:122   0
+
+  -------------------------------------------------------------
+      8        0        1        0        0      0x7f3b829238c0
+  -------------------------------------------------------------
+    0.00%  100.00%    0.00%    0.00%   0x30     0       1      0x5604d4f38620         0       109         0        1         1  [.] classify  classify  classify.cpp:122   0
+
+  -------------------------------------------------------------
+      9        0        1        0        0      0x7f3b829fd0c0
+  -------------------------------------------------------------
+    0.00%  100.00%    0.00%    0.00%   0x30     0       1      0x5604d4f38620         0       115         0        1         1  [.] classify  classify  classify.cpp:122   0
+
+  -------------------------------------------------------------
+     10        0        1        0        0      0x7f3b82c77100
+  -------------------------------------------------------------
+    0.00%  100.00%    0.00%    0.00%   0x10     0       1      0x5604d4f38620         0       126         0        1         1  [.] classify  classify  classify.cpp:122   0
+
+  -------------------------------------------------------------
+     11        0        1        0        0      0x7f3b82ccf0c0
+  -------------------------------------------------------------
+    0.00%  100.00%    0.00%    0.00%   0x10     0       1      0x5604d4f38620         0       127         0        1         1  [.] classify  classify  classify.cpp:122   0

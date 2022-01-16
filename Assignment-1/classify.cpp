@@ -1,8 +1,6 @@
 #include "classify.h"
 #include <omp.h>
 #include <vector>
-#include <utility>
-#include <chrono>
 
 Range::Range(int a=1, int b=0) {
    lo = a;
@@ -96,15 +94,6 @@ int Ranges::num() const { return _num; }
 
 bool Ranges::newrange(const Range r) {
    return (range(r.lo, true) == BADRANGE && range(r.hi, true) == BADRANGE);
-}
-
-Item::Item() {
-   key = value = -1;
-}
-
-Item::Item(int a, int b) {
-   key = a;
-   value = b;
 }
 
 Data classify(Data &D, const Ranges &R, unsigned int numt)

@@ -1,22 +1,19 @@
 Performance counter stats for './classify rfile dfile 1009072 4 3':
 
-          3,676.49 msec task-clock                #    3.778 CPUs utilized          
-               164      context-switches          #    0.045 K/sec                  
-                 8      cpu-migrations            #    0.002 K/sec                  
-             9,244      page-faults               #    0.003 M/sec                  
-   13,28,93,70,509      cycles                    #    3.615 GHz                      (49.96%)
-   34,16,70,48,391      instructions              #    2.57  insn per cycle           (62.45%)
-   12,22,04,53,887      branches                  # 3323.949 M/sec                    (62.54%)
-         30,88,273      branch-misses             #    0.03% of all branches          (62.67%)
-    6,31,41,20,852      L1-dcache-loads           # 1717.434 M/sec                    (62.76%)
-      38,28,86,984      L1-dcache-load-misses     #    6.06% of all L1-dcache accesses  (62.94%)
-       1,55,89,372      LLC-loads                 #    4.240 M/sec                    (50.08%)
-         15,40,945      LLC-load-misses           #    9.88% of all LL-cache accesses  (49.72%)
+       3982.948183      task-clock:u (msec)       #    3.621 CPUs utilized          
+                 0      context-switches:u        #    0.000 K/sec                  
+                 0      cpu-migrations:u          #    0.000 K/sec                  
+              6451      page-faults:u             #    0.002 M/sec                  
+        9817846975      cycles:u                  #    2.465 GHz                    
+       29942869748      instructions:u            #    3.05  insn per cycle         
+       10874296603      branches:u                # 2730.213 M/sec                  
+           3938437      branch-misses:u           #    0.04% of all branches        
+        6446286153      L1-dcache-loads:u         # 1618.471 M/sec                  
+         391974074      L1-dcache-load-misses:u   #    6.08% of all L1-dcache hits  
+          33282400      LLC-loads:u               #    8.356 M/sec                  
+           2058309      LLC-load-misses:u         #    6.18% of all LL-cache hits   
 
-       0.973061566 seconds time elapsed
-
-       3.673833000 seconds user
-       0.003988000 seconds sys
+       1.100027249 seconds time elapsed
 
 =================================================
             Trace Event Information              
