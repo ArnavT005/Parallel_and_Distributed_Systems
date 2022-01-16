@@ -1,0 +1,80 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+ 42.16      0.08     0.08        3    26.70    30.04  readData(char const*, unsigned int)
+ 42.16      0.16     0.08        3    26.70    26.70  Ranges::range_binary(int, bool) const
+ 10.54      0.18     0.02        3     6.68    63.42  classify(Data&, Ranges const&, unsigned int)
+  5.27      0.19     0.01  1009072     0.00     0.00  Item::Item()
+  0.00      0.19     0.00     2000     0.00     0.00  Ranges::range(int, bool) const
+  0.00      0.19     0.00     1000     0.00     0.00  Range::Range(int, int)
+  0.00      0.19     0.00     1000     0.00     0.00  Ranges::newrange(Range)
+  0.00      0.19     0.00     1000     0.00     0.00  Ranges::operator+=(Range)
+  0.00      0.19     0.00        3     0.00    63.42  timedwork(Data&, Ranges const&, unsigned int)
+  0.00      0.19     0.00        2     0.00     0.00  main
+  0.00      0.19     0.00        1     0.00     0.00  Ranges::Ranges()
+  0.00      0.19     0.00        1     0.00     0.00  Ranges::num() const
+
+			Call graph
+
+
+granularity: each sample hit covers 2 byte(s) for 5.26% of 0.19 seconds
+
+index % time    self  children    called     name
+                0.02    0.17       3/3           timedwork(Data&, Ranges const&, unsigned int) [2]
+[1]    100.0    0.02    0.17       3         classify(Data&, Ranges const&, unsigned int) [1]
+                0.08    0.01       3/3           readData(char const*, unsigned int) [4]
+                0.08    0.00       3/3           Ranges::range_binary(int, bool) const [5]
+-----------------------------------------------
+                0.00    0.19       3/3           repeatrun(unsigned int, Data&, Ranges const&, unsigned int) [3]
+[2]    100.0    0.00    0.19       3         timedwork(Data&, Ranges const&, unsigned int) [2]
+                0.02    0.17       3/3           classify(Data&, Ranges const&, unsigned int) [1]
+-----------------------------------------------
+                                                 <spontaneous>
+[3]    100.0    0.00    0.19                 repeatrun(unsigned int, Data&, Ranges const&, unsigned int) [3]
+                0.00    0.19       3/3           timedwork(Data&, Ranges const&, unsigned int) [2]
+                0.00    0.00       1/1           Ranges::num() const [16]
+-----------------------------------------------
+                0.08    0.01       3/3           classify(Data&, Ranges const&, unsigned int) [1]
+[4]     47.4    0.08    0.01       3         readData(char const*, unsigned int) [4]
+                0.01    0.00 1009072/1009072     Item::Item() [6]
+-----------------------------------------------
+                              511520             Ranges::range_binary(int, bool) const [5]
+                0.08    0.00       3/3           classify(Data&, Ranges const&, unsigned int) [1]
+[5]     42.1    0.08    0.00       3+511520  Ranges::range_binary(int, bool) const [5]
+                              511520             Ranges::range_binary(int, bool) const [5]
+-----------------------------------------------
+                0.01    0.00 1009072/1009072     readData(char const*, unsigned int) [4]
+[6]      5.3    0.01    0.00 1009072         Item::Item() [6]
+-----------------------------------------------
+                0.00    0.00       2/2           __libc_csu_init [25]
+[7]      0.0    0.00    0.00       2         main [7]
+-----------------------------------------------
+                0.00    0.00    2000/2000        Ranges::newrange(Range) [13]
+[11]     0.0    0.00    0.00    2000         Ranges::range(int, bool) const [11]
+-----------------------------------------------
+                0.00    0.00    1000/1000        readRanges(char const*) [17]
+[12]     0.0    0.00    0.00    1000         Range::Range(int, int) [12]
+-----------------------------------------------
+                0.00    0.00    1000/1000        Ranges::operator+=(Range) [14]
+[13]     0.0    0.00    0.00    1000         Ranges::newrange(Range) [13]
+                0.00    0.00    2000/2000        Ranges::range(int, bool) const [11]
+-----------------------------------------------
+                0.00    0.00    1000/1000        readRanges(char const*) [17]
+[14]     0.0    0.00    0.00    1000         Ranges::operator+=(Range) [14]
+                0.00    0.00    1000/1000        Ranges::newrange(Range) [13]
+-----------------------------------------------
+                0.00    0.00       1/1           readRanges(char const*) [17]
+[15]     0.0    0.00    0.00       1         Ranges::Ranges() [15]
+-----------------------------------------------
+                0.00    0.00       1/1           repeatrun(unsigned int, Data&, Ranges const&, unsigned int) [3]
+[16]     0.0    0.00    0.00       1         Ranges::num() const [16]
+-----------------------------------------------
+
+Index by function name
+
+   [1] classify(Data&, Ranges const&, unsigned int) [12] Range::Range(int, int) [5] Ranges::range_binary(int, bool) const
+   [4] readData(char const*, unsigned int) [13] Ranges::newrange(Range) [16] Ranges::num() const
+   [2] timedwork(Data&, Ranges const&, unsigned int) [15] Ranges::Ranges() [11] Ranges::range(int, bool) const
+   [6] Item::Item()           [14] Ranges::operator+=(Range) [7] main

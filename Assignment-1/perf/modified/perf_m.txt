@@ -1,3 +1,20 @@
+Performance counter stats for './classify rfile dfile 1009072 4 3':
+
+       1579.972389      task-clock:u (msec)       #    2.310 CPUs utilized          
+                 0      context-switches:u        #    0.000 K/sec                  
+                 0      cpu-migrations:u          #    0.000 K/sec                  
+              9308      page-faults:u             #    0.006 M/sec                  
+        3347853894      cycles:u                  #    2.119 GHz                    
+       11605996070      instructions:u            #    3.47  insn per cycle         
+        4779828584      branches:u                # 3025.261 M/sec                  
+           3227616      branch-misses:u           #    0.07% of all branches        
+        3332396636      L1-dcache-loads:u         # 2109.149 M/sec                  
+           4190805      L1-dcache-load-misses:u   #    0.13% of all L1-dcache hits  
+            484744      LLC-loads:u               #    0.307 M/sec                  
+            217781      LLC-load-misses:u         #   44.93% of all LL-cache hits   
+
+       0.683931409 seconds time elapsed
+
 =================================================
             Trace Event Information              
 =================================================

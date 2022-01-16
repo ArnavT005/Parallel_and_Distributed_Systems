@@ -1,70 +1,67 @@
 Performance counter stats for './classify rfile dfile 1009072 4 3':
 
-          1,355.28 msec task-clock                #    3.295 CPUs utilized          
-                62      context-switches          #    0.046 K/sec                  
-                 3      cpu-migrations            #    0.002 K/sec                  
-            24,533      page-faults               #    0.018 M/sec                  
-    4,98,42,87,934      cycles                    #    3.678 GHz                      (48.57%)
-   15,52,64,60,019      instructions              #    3.12  insn per cycle           (63.46%)
-    6,02,66,68,763      branches                  # 4446.809 M/sec                    (63.67%)
-         32,09,853      branch-misses             #    0.05% of all branches          (64.73%)
-    3,35,03,81,419      L1-dcache-loads           # 2472.097 M/sec                    (63.86%)
-         78,95,428      L1-dcache-load-misses     #    0.24% of all L1-dcache accesses  (63.45%)
-          4,94,238      LLC-loads                 #    0.365 M/sec                    (48.96%)
-          1,75,484      LLC-load-misses           #   35.51% of all LL-cache accesses  (48.15%)
+       1362.261611      task-clock:u (msec)       #    2.754 CPUs utilized          
+                 0      context-switches:u        #    0.000 K/sec                  
+                 0      cpu-migrations:u          #    0.000 K/sec                  
+             21108      page-faults:u             #    0.015 M/sec                  
+        3269389263      cycles:u                  #    2.400 GHz                    
+       11695879469      instructions:u            #    3.58  insn per cycle         
+        4781713795      branches:u                # 3510.129 M/sec                  
+           3209853      branch-misses:u           #    0.07% of all branches        
+        3322758888      L1-dcache-loads:u         # 2439.149 M/sec                  
+           4324038      L1-dcache-load-misses:u   #    0.13% of all L1-dcache hits  
+            353853      LLC-loads:u               #    0.260 M/sec                  
+             60095      LLC-load-misses:u         #   16.98% of all LL-cache hits   
 
-       0.411312432 seconds time elapsed
-
-       1.336563000 seconds user
-       0.019889000 seconds sys
+       0.494701757 seconds time elapsed
 
 =================================================
             Trace Event Information              
 =================================================
-  Total records                     :       2050
-  Locked Load/Store Operations      :         30
-  Load Operations                   :        369
-  Loads - uncacheable               :          0
+  Total records                     :      12892
+  Locked Load/Store Operations      :        139
+  Load Operations                   :       1369
+  Loads - uncacheable               :        556
   Loads - IO                        :          0
   Loads - Miss                      :          0
-  Loads - no mapping                :          2
-  Load Fill Buffer Hit              :        124
-  Load L1D hit                      :        195
-  Load L2D hit                      :          3
-  Load LLC hit                      :         37
-  Load Local HITM                   :          0
+  Loads - no mapping                :          8
+  Load Fill Buffer Hit              :        274
+  Load L1D hit                      :        371
+  Load L2D hit                      :          7
+  Load LLC hit                      :        122
+  Load Local HITM                   :          3
   Load Remote HITM                  :          0
   Load Remote HIT                   :          0
-  Load Local DRAM                   :          8
+  Load Local DRAM                   :         31
   Load Remote DRAM                  :          0
   Load MESI State Exclusive         :          0
-  Load MESI State Shared            :          8
-  Load LLC Misses                   :          8
+  Load MESI State Shared            :         31
+  Load LLC Misses                   :         31
   LLC Misses to Local DRAM          :      100.0%
   LLC Misses to Remote DRAM         :        0.0%
   LLC Misses to Remote cache (HIT)  :        0.0%
   LLC Misses to Remote cache (HITM) :        0.0%
-  Store Operations                  :       1681
+  Store Operations                  :      11523
   Store - uncacheable               :          0
   Store - no mapping                :          2
-  Store L1D Hit                     :       1668
-  Store L1D Miss                    :         11
-  No Page Map Rejects               :        336
+  Store L1D Hit                     :      11392
+  Store L1D Miss                    :        129
+  No Page Map Rejects               :       9293
   Unable to parse data source       :          0
 
 =================================================
     Global Shared Cache Line Event Information   
 =================================================
-  Total Shared Cache Lines          :          0
-  Load HITs on shared lines         :          0
+  Total Shared Cache Lines          :          3
+  Load HITs on shared lines         :          3
   Fill Buffer Hits on shared lines  :          0
   L1D hits on shared lines          :          0
   L2D hits on shared lines          :          0
-  LLC hits on shared lines          :          0
+  LLC hits on shared lines          :          3
   Locked Access on shared lines     :          0
   Store HITs on shared lines        :          0
   Store L1D hits on shared lines    :          0
-  Total Merged records              :          0
+  Total Merged records              :          3
 
 =================================================
                  c2c details                     
@@ -82,8 +79,29 @@ Performance counter stats for './classify rfile dfile 1009072 4 3':
 # Index             Address  Node  PA cnt     Hitm    Total  LclHitm  RmtHitm  records    Loads   Stores    L1Hit   L1Miss       FB       L1       L2    LclHit  LclHitm    RmtHit  RmtHitm       Lcl       Rmt
 # .....  ..................  ....  ......  .......  .......  .......  .......  .......  .......  .......  .......  .......  .......  .......  .......  ........  .......  ........  .......  ........  ........
 #
+      0  0xffff99112e42d340     0       1   33.33%        1        1        0        1        1        0        0        0        0        0        0         0        1         0        0         0         0
+      1      0x7f801b3842c0     0       1   33.33%        1        1        0        1        1        0        0        0        0        0        0         0        1         0        0         0         0
+      2      0x7f801b39dbc0     0       1   33.33%        1        1        0        1        1        0        0        0        0        0        0         0        1         0        0         0         0
 
 =================================================
       Shared Cache Line Distribution Pareto      
 =================================================
 #
+# ----- HITM -----  -- Store Refs --  ------- CL --------                      ---------- cycles ----------    Total       cpu                                    Shared                   
+# RmtHitm  LclHitm   L1 Hit  L1 Miss    Off  Node  PA cnt        Code address  rmt hitm  lcl hitm      load  records       cnt                  Symbol            Object  Source:Line  Node
+# .......  .......  .......  .......  .....  ....  ......  ..................  ........  ........  ........  .......  ........  ......................  ................  ...........  ....
+#
+  -------------------------------------------------------------
+      0        0        1        0        0  0xffff99112e42d340
+  -------------------------------------------------------------
+    0.00%  100.00%    0.00%    0.00%    0x0     0       1  0xffffffff8258f1b0         0       105         0        1         1  [k] 0xffffffff8258f1b0  [unknown]         ??:0          0
+
+  -------------------------------------------------------------
+      1        0        1        0        0      0x7f801b3842c0
+  -------------------------------------------------------------
+    0.00%  100.00%    0.00%    0.00%   0x10     0       1      0x555fcd6c87c0         0       108         0        1         1  [.] classify  classify  classify.cpp:134   0
+
+  -------------------------------------------------------------
+      2        0        1        0        0      0x7f801b39dbc0
+  -------------------------------------------------------------
+    0.00%  100.00%    0.00%    0.00%   0x30     0       1      0x555fcd6c87c0         0       117         0        1         1  [.] classify  classify  classify.cpp:134   0

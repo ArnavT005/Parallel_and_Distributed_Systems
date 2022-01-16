@@ -1,0 +1,86 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+ 50.05      0.10     0.10        3    33.37    33.37  Ranges::range_binary(int, bool) const
+ 25.02      0.15     0.05        3    16.68    66.73  classify(Data&, Ranges const&, unsigned int)
+ 10.01      0.17     0.02       24     0.83     0.83  std::vector<std::pair<int, int>, std::allocator<std::pair<int, int> > >::_M_default_append(unsigned long)
+ 10.01      0.19     0.02        6     3.34     5.00  readData(char const*, unsigned int)
+  5.00      0.20     0.01  1009072     0.00     0.00  Item::Item()
+  0.00      0.20     0.00     2000     0.00     0.00  Ranges::range(int, bool) const
+  0.00      0.20     0.00     1000     0.00     0.00  Range::Range(int, int)
+  0.00      0.20     0.00     1000     0.00     0.00  Ranges::newrange(Range)
+  0.00      0.20     0.00     1000     0.00     0.00  Ranges::operator+=(Range)
+  0.00      0.20     0.00        3     0.00    66.73  timedwork(Data&, Ranges const&, unsigned int)
+  0.00      0.20     0.00        2     0.00     0.00  main
+  0.00      0.20     0.00        1     0.00     0.00  Ranges::Ranges()
+  0.00      0.20     0.00        1     0.00     0.00  Ranges::num() const
+
+			Call graph
+
+
+granularity: each sample hit covers 2 byte(s) for 5.00% of 0.20 seconds
+
+index % time    self  children    called     name
+                0.05    0.15       3/3           timedwork(Data&, Ranges const&, unsigned int) [2]
+[1]    100.0    0.05    0.15       3         classify(Data&, Ranges const&, unsigned int) [1]
+                0.10    0.00       3/3           Ranges::range_binary(int, bool) const [4]
+                0.02    0.01       6/6           readData(char const*, unsigned int) [5]
+                0.02    0.00      24/24          std::vector<std::pair<int, int>, std::allocator<std::pair<int, int> > >::_M_default_append(unsigned long) [6]
+-----------------------------------------------
+                0.00    0.20       3/3           repeatrun(unsigned int, Data&, Ranges const&, unsigned int) [3]
+[2]    100.0    0.00    0.20       3         timedwork(Data&, Ranges const&, unsigned int) [2]
+                0.05    0.15       3/3           classify(Data&, Ranges const&, unsigned int) [1]
+-----------------------------------------------
+                                                 <spontaneous>
+[3]    100.0    0.00    0.20                 repeatrun(unsigned int, Data&, Ranges const&, unsigned int) [3]
+                0.00    0.20       3/3           timedwork(Data&, Ranges const&, unsigned int) [2]
+                0.00    0.00       1/1           Ranges::num() const [17]
+-----------------------------------------------
+                              338867             Ranges::range_binary(int, bool) const [4]
+                0.10    0.00       3/3           classify(Data&, Ranges const&, unsigned int) [1]
+[4]     50.0    0.10    0.00       3+338867  Ranges::range_binary(int, bool) const [4]
+                              338867             Ranges::range_binary(int, bool) const [4]
+-----------------------------------------------
+                0.02    0.01       6/6           classify(Data&, Ranges const&, unsigned int) [1]
+[5]     15.0    0.02    0.01       6         readData(char const*, unsigned int) [5]
+                0.01    0.00 1009072/1009072     Item::Item() [7]
+-----------------------------------------------
+                0.02    0.00      24/24          classify(Data&, Ranges const&, unsigned int) [1]
+[6]     10.0    0.02    0.00      24         std::vector<std::pair<int, int>, std::allocator<std::pair<int, int> > >::_M_default_append(unsigned long) [6]
+-----------------------------------------------
+                0.01    0.00 1009072/1009072     readData(char const*, unsigned int) [5]
+[7]      5.0    0.01    0.00 1009072         Item::Item() [7]
+-----------------------------------------------
+                0.00    0.00       2/2           __libc_csu_init [27]
+[8]      0.0    0.00    0.00       2         main [8]
+-----------------------------------------------
+                0.00    0.00    2000/2000        Ranges::newrange(Range) [14]
+[12]     0.0    0.00    0.00    2000         Ranges::range(int, bool) const [12]
+-----------------------------------------------
+                0.00    0.00    1000/1000        readRanges(char const*) [18]
+[13]     0.0    0.00    0.00    1000         Range::Range(int, int) [13]
+-----------------------------------------------
+                0.00    0.00    1000/1000        Ranges::operator+=(Range) [15]
+[14]     0.0    0.00    0.00    1000         Ranges::newrange(Range) [14]
+                0.00    0.00    2000/2000        Ranges::range(int, bool) const [12]
+-----------------------------------------------
+                0.00    0.00    1000/1000        readRanges(char const*) [18]
+[15]     0.0    0.00    0.00    1000         Ranges::operator+=(Range) [15]
+                0.00    0.00    1000/1000        Ranges::newrange(Range) [14]
+-----------------------------------------------
+                0.00    0.00       1/1           readRanges(char const*) [18]
+[16]     0.0    0.00    0.00       1         Ranges::Ranges() [16]
+-----------------------------------------------
+                0.00    0.00       1/1           repeatrun(unsigned int, Data&, Ranges const&, unsigned int) [3]
+[17]     0.0    0.00    0.00       1         Ranges::num() const [17]
+-----------------------------------------------
+
+Index by function name
+
+   [1] classify(Data&, Ranges const&, unsigned int) [14] Ranges::newrange(Range) [12] Ranges::range(int, bool) const
+   [5] readData(char const*, unsigned int) [16] Ranges::Ranges() [6] std::vector<std::pair<int, int>, std::allocator<std::pair<int, int> > >::_M_default_append(unsigned long)
+   [2] timedwork(Data&, Ranges const&, unsigned int) [15] Ranges::operator+=(Range) [8] main
+   [7] Item::Item()            [4] Ranges::range_binary(int, bool) const
+  [13] Range::Range(int, int) [17] Ranges::num() const
