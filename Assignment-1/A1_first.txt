@@ -1,0 +1,219 @@
+===============================
+2627794.pbshpc
+chas068.hpc.iitd.ac.in
+===============================
+/home/cse/btech/cs1190424
+n_threads = 1
+N = 100000 p = 24
+Data is sorted.
+Time taken for sorting 100000 elements with 24 buckets = 32.5554ms
+n_threads = 2
+N = 100000 p = 24
+Data is sorted.
+Time taken for sorting 100000 elements with 24 buckets = 17.0245ms
+n_threads = 4
+N = 100000 p = 24
+Data is sorted.
+Time taken for sorting 100000 elements with 24 buckets = 10.6109ms
+n_threads = 6
+N = 100000 p = 24
+Data is sorted.
+Time taken for sorting 100000 elements with 24 buckets = 8.31258ms
+n_threads = 8
+N = 100000 p = 24
+Data is sorted.
+Time taken for sorting 100000 elements with 24 buckets = 7.20303ms
+n_threads = 10
+N = 100000 p = 24
+Data is sorted.
+Time taken for sorting 100000 elements with 24 buckets = 5.76864ms
+n_threads = 12
+N = 100000 p = 24
+Data is sorted.
+Time taken for sorting 100000 elements with 24 buckets = 5.38142ms
+n_threads = 14
+N = 100000 p = 24
+Data is sorted.
+Time taken for sorting 100000 elements with 24 buckets = 5.22544ms
+n_threads = 16
+N = 100000 p = 24
+Data is sorted.
+Time taken for sorting 100000 elements with 24 buckets = 5.26352ms
+n_threads = 18
+N = 100000 p = 24
+Data is sorted.
+Time taken for sorting 100000 elements with 24 buckets = 4.60548ms
+n_threads = 20
+N = 100000 p = 24
+Data is sorted.
+Time taken for sorting 100000 elements with 24 buckets = 4.65435ms
+n_threads = 22
+N = 100000 p = 24
+Data is sorted.
+Time taken for sorting 100000 elements with 24 buckets = 4.67826ms
+n_threads = 24
+N = 100000 p = 24
+Data is sorted.
+Time taken for sorting 100000 elements with 24 buckets = 4.36338ms
+
+
+n_threads = 1
+N = 1000000 p = 24
+Data is sorted.
+Time taken for sorting 1000000 elements with 24 buckets = 358.949ms
+n_threads = 2
+N = 1000000 p = 24
+Data is sorted.
+Time taken for sorting 1000000 elements with 24 buckets = 185.369ms
+n_threads = 4
+N = 1000000 p = 24
+Data is sorted.
+Time taken for sorting 1000000 elements with 24 buckets = 104.376ms
+n_threads = 6
+N = 1000000 p = 24
+Data is sorted.
+Time taken for sorting 1000000 elements with 24 buckets = 80.5148ms
+n_threads = 8
+N = 1000000 p = 24
+Data is sorted.
+Time taken for sorting 1000000 elements with 24 buckets = 65.7268ms
+n_threads = 10
+N = 1000000 p = 24
+Data is sorted.
+Time taken for sorting 1000000 elements with 24 buckets = 53.2857ms
+n_threads = 12
+N = 1000000 p = 24
+Data is sorted.
+Time taken for sorting 1000000 elements with 24 buckets = 57.6382ms
+n_threads = 14
+N = 1000000 p = 24
+Data is sorted.
+Time taken for sorting 1000000 elements with 24 buckets = 47.7684ms
+n_threads = 16
+N = 1000000 p = 24
+Data is sorted.
+Time taken for sorting 1000000 elements with 24 buckets = 47.1132ms
+n_threads = 18
+N = 1000000 p = 24
+Data is sorted.
+Time taken for sorting 1000000 elements with 24 buckets = 38.7383ms
+n_threads = 20
+N = 1000000 p = 24
+Data is sorted.
+Time taken for sorting 1000000 elements with 24 buckets = 39.8151ms
+n_threads = 22
+N = 1000000 p = 24
+Data is sorted.
+Time taken for sorting 1000000 elements with 24 buckets = 36.1824ms
+n_threads = 24
+N = 1000000 p = 24
+Data is sorted.
+Time taken for sorting 1000000 elements with 24 buckets = 36.5777ms
+
+
+n_threads = 1
+N = 10000000 p = 24
+Data is sorted.
+Time taken for sorting 10000000 elements with 24 buckets = 3969.48ms
+n_threads = 2
+N = 10000000 p = 24
+Data is sorted.
+Time taken for sorting 10000000 elements with 24 buckets = 2127.69ms
+n_threads = 4
+N = 10000000 p = 24
+Data is sorted.
+Time taken for sorting 10000000 elements with 24 buckets = 1147.71ms
+n_threads = 6
+N = 10000000 p = 24
+Data is sorted.
+Time taken for sorting 10000000 elements with 24 buckets = 874.59ms
+n_threads = 8
+N = 10000000 p = 24
+Data is sorted.
+Time taken for sorting 10000000 elements with 24 buckets = 650.821ms
+n_threads = 10
+N = 10000000 p = 24
+Data is sorted.
+Time taken for sorting 10000000 elements with 24 buckets = 618.823ms
+n_threads = 12
+N = 10000000 p = 24
+Data is sorted.
+Time taken for sorting 10000000 elements with 24 buckets = 555.986ms
+n_threads = 14
+N = 10000000 p = 24
+Data is sorted.
+Time taken for sorting 10000000 elements with 24 buckets = 501.91ms
+n_threads = 16
+N = 10000000 p = 24
+Data is sorted.
+Time taken for sorting 10000000 elements with 24 buckets = 509.343ms
+n_threads = 18
+N = 10000000 p = 24
+Data is sorted.
+Time taken for sorting 10000000 elements with 24 buckets = 420.714ms
+n_threads = 20
+N = 10000000 p = 24
+Data is sorted.
+Time taken for sorting 10000000 elements with 24 buckets = 456.077ms
+n_threads = 22
+N = 10000000 p = 24
+Data is sorted.
+Time taken for sorting 10000000 elements with 24 buckets = 400.042ms
+n_threads = 24
+N = 10000000 p = 24
+Data is sorted.
+Time taken for sorting 10000000 elements with 24 buckets = 403.246ms
+
+
+n_threads = 1
+N = 100000000 p = 24
+Data is sorted.
+Time taken for sorting 100000000 elements with 24 buckets = 43334.5ms
+n_threads = 2
+N = 100000000 p = 24
+Data is sorted.
+Time taken for sorting 100000000 elements with 24 buckets = 22104.1ms
+n_threads = 4
+N = 100000000 p = 24
+Data is sorted.
+Time taken for sorting 100000000 elements with 24 buckets = 12499.9ms
+n_threads = 6
+N = 100000000 p = 24
+Data is sorted.
+Time taken for sorting 100000000 elements with 24 buckets = 9951.22ms
+n_threads = 8
+N = 100000000 p = 24
+Data is sorted.
+Time taken for sorting 100000000 elements with 24 buckets = 7751.46ms
+n_threads = 10
+N = 100000000 p = 24
+Data is sorted.
+Time taken for sorting 100000000 elements with 24 buckets = 6526.49ms
+n_threads = 12
+N = 100000000 p = 24
+Data is sorted.
+Time taken for sorting 100000000 elements with 24 buckets = 5883.65ms
+n_threads = 14
+N = 100000000 p = 24
+Data is sorted.
+Time taken for sorting 100000000 elements with 24 buckets = 5608.85ms
+n_threads = 16
+N = 100000000 p = 24
+Data is sorted.
+Time taken for sorting 100000000 elements with 24 buckets = 5372.53ms
+n_threads = 18
+N = 100000000 p = 24
+Data is sorted.
+Time taken for sorting 100000000 elements with 24 buckets = 4949.17ms
+n_threads = 20
+N = 100000000 p = 24
+Data is sorted.
+Time taken for sorting 100000000 elements with 24 buckets = 4521.28ms
+n_threads = 22
+N = 100000000 p = 24
+Data is sorted.
+Time taken for sorting 100000000 elements with 24 buckets = 3925.99ms
+n_threads = 24
+N = 100000000 p = 24
+Data is sorted.
+Time taken for sorting 100000000 elements with 24 buckets = 3830.43ms

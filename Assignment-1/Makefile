@@ -16,4 +16,4 @@ main:$(objects)
 
 .PHONY: clean
 clean:
-	rm *.so *.o
+	rm *.so *.o main

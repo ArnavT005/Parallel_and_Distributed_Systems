@@ -10,9 +10,12 @@ def generate_test_set(nsize, p):
     infile = f'input_{nsize}.txt'
 
     with open(infile, 'w') as fp:
-        lines = [f"{nsize} {p}\n"]
-        lines.extend([f"{x}\n" for x in data])
-        fp.writelines(lines)
+        # lines = [f"{nsize} {p}\n"]
+        fp.write(f"{nsize} {p}\n")
+        for x in data:
+            fp.write(f"{x}\n")
+        # lines.extend([f"{x}\n" for x in data])
+        # fp.writelines(lines)
 
     print(f'Sample data saved at {infile}')
 
