@@ -2,6 +2,8 @@
 #include <mpi.h>
 #include <assert.h>
 #include <fstream>
+#include <cstring>
+#include <math.h>
 #include "randomizer.hpp"
 
 namespace ds {
@@ -103,6 +105,12 @@ namespace ds {
         }
     }
 
+    template <typename T, typename K>
+    struct Pair {
+        T a;
+        K b;
+    }
+
 }
 
 namespace misc {
@@ -177,11 +185,9 @@ int main(int argc, char* argv[]){
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    //print_random(rank, num_nodes, random_generator);
-
     // initialise user graph
     ds::Graph G(num_nodes, num_edges);
-    // read graph data from file
+    // read edge data from file
     std::ifstream fin(graph_file, std::ios::in | std::ios::binary);
     for (int i = 0; i < num_edges; i ++) {
         int a, b;
@@ -208,7 +214,53 @@ int main(int argc, char* argv[]){
 
     // divide users among processes, valid_uid = [start_uid, end_uid)
     int start_uid = rank * (num_nodes / size), end_uid = (rank == size - 1) ? num_nodes : (start_uid + (num_nodes / size));
-
-
+    // determine circle and influence score
+    int *score = new int[num_nodes];
+    bool *in_circle = new bool[num_nodes];
+    for (int i = start_uid; i < end_uid; i ++) {
+        // reset score and circle
+        std::memset(score, 0, sizeof(score));
+        std::memset(in_circle, 0, sizeof(in_circle));
+        // get number of children
+        int num_child = G[i].get_size();
+        int *L = new int[num_child];
+        // initialize hub
+        for (int j = 0; j < num_child; j ++) {
+            L[j] = G[i][j];
+            in_circle[L[j]] = true;
+        }
+        // start rwr from each node in L
+        for (int j = 0; j < num_child; j ++) {
+            while (num_walks --) {
+                int curr_node = L[j];
+                while (num_steps --) {
+                    int out_degree = G[curr_node].get_size();
+                    if (out_degree > 0) {
+                        int next_step = random_generator.get_random_value(i);
+                        if (next_step < 0) {
+                            curr_node = L[j];
+                        } else {
+                            curr_node = G[curr_node][next_step % out_degree];
+                            score[curr_node] ++;
+                            in_circle[curr_node] = true;
+                        }
+                    } else {
+                        curr_node = L[j];
+                    }
+                }
+            }
+        }
+        if ((double) num_nodes * num_rec > (double) num_nodes * log2(num_nodes)) {
+            // sort score
+            ds::Pair<int, int> *influence_score = new Pair<int, int>[num_nodes];
+            for (int j = 0; j < num_nodes; j ++) {
+                influence_score[j].a = j;
+                influence_score[j].b = score[j]; 
+            }
+            misc::sort(influence_score)
+        } else {
+            // loop over score
+        }
+    }
     MPI_Finalize();
 }
