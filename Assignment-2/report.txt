@@ -1,0 +1,33 @@
+Run-Time v/s No. of MPI processes
+
+Parameter Values Used:
+num_walks = 30, num_steps = 500, num_rec = 20, seed = 369, restart_prob=0.1
+
+(a) Graph A: num_nodes = 8717, num_edges = 31525
+MPI Processes: 1, Run-Time: 19.278 s
+MPI Processes: 2, Run-Time: 10.918 s
+MPI Processes: 4, Run-Time: 8.214 s
+MPI Processes: 8, Run-Time: 5.039 s
+MPI Processes: 16, Run-Time: 4.063 s
+
+(b) Graph B: num_nodes = 81867, num_edges = 545671
+MPI Processes: 1, Run-Time: 14 min 24.822 s
+MPI Processes: 2, Run-Time: 10 min 0.798 s
+MPI Processes: 4, Run-Time: 4 min 47.875 s
+MPI Processes: 8, Run-Time: 1 min 57.967 s
+MPI Processes: 16, Run-Time: 59.847 s
+
+(c) Graph C: num_nodes = 82168, num_edges = 870161
+MPI Processes: 1, Run-Time: 27 min 28.535 s
+MPI Processes: 2, Run-Time: 18 min 27.844 s
+MPI Processes: 4, Run-Time: 8 min 28.675 s
+MPI Processes: 8, Run-Time: 3 min 45.189 s
+MPI Processes: 16, Run-Time: 2 min 5.472 s
+
+Design Idea:
+One process (rank 0) acts as server and distributes chunks of users among other processes (clients).
+Other processes receive user chunks from server and apply RWR on them, and write their output to file (at desired offset)
+Other processes keeps block till server send them new chunk, or signal them to terminate (user id = -1)
+
+This idea is only used when no. of processes > 2. When no. of processes <= 2, work is divided statically, by ensuring that the processes
+handle roughly the same number out-degrees (in total).
