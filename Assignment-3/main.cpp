@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
     displacements.push_back(sum);
     sum += (end_item - start_item);
   }
-  double* vect = new double[num_news];
+  double* vect = new double[num_news * embedding_size];
   MPI_Allgatherv((void*) vect_buff, end_news - start_news, vector_t, vect, counts.data(), displacements.data(), vector_t, MPI_COMM_WORLD);
   //divide work among threads
   MPI_Datatype items_t;
