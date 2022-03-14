@@ -1,139 +1,11 @@
 #include <bits/stdc++.h>
 #include <mpi.h>
+#include <omp.h>
 
-template <typename T>
-using V = std::vector<T>;
+#include <chrono>
 
-template <typename T, typename K>
-using P = std::pair<T, K>;
-
-namespace metric {
-double norm(V<double> &a) {
-  double norm = 0;
-  for (int i = 0; i < a.size(); i++) {
-    norm += a[i] * a[i];
-  }
-  return sqrt(norm);
-}
-
-double cosine_dist(V<double> &a, V<double> &b) {
-  double dist = 0;
-  for (int i = 0; i < a.size(); i++) {
-    dist += (a[i] * b[i]);
-  }
-  return dist / (norm(a) * norm(b));
-}
-}  // namespace metric
-
-namespace hnsw {
-struct comparePairMax {
-  bool operator()(const P<int, double> &a, const P<int, double> &b) {
-    if (a.second < b.second) {
-      return true;
-    } else if (a.second == b.second) {
-      return b.first < a.first;
-    } else {
-      return false;
-    }
-  }
-};
-
-V<P<int, double>> SearchLayer(V<double> &user, V<P<int, double>> &candidates,
-                              V<int> &indptr, V<int> &index,
-                              V<int> &level_offset, int level, V<bool> &visited,
-                              V<V<double>> vect, int K) {
-  V<P<int, double>> topk = candidates;
-  while (candidates.size() > 0) {
-    std::pop_heap(candidates.begin(), candidates.end(), comparePairMax());
-    int ep = candidates[candidates.size() - 1].first;
-    candidates.pop_back();
-    int start = indptr[ep] + level_offset[level],
-        end = indptr[ep] + level_offset[level + 1];
-    for (int i = start; i < end; i++) {
-      if (visited[index[i]] || index[i] == -1) {
-        continue;
-      }
-      visited[index[i]] = true;
-      double _dist = metric::cosine_dist(user, vect[index[i]]);
-      if (_dist > topk[0].first && topk.size() == K) {
-        continue;
-      }
-      topk.push_back(P<int, double>(index[i], _dist));
-      std::push_heap(topk.begin(), topk.end(), comparePairMax());
-      if (topk.size() > K) {
-        std::pop_heap(topk.begin(), topk.end(), comparePairMax());
-        topk.pop_back();
-      }
-      candidates.push_back(P<int, double>(index[i], _dist));
-      std::push_heap(candidates.begin(), candidates.end(), comparePairMax());
-    }
-  }
-  return topk;
-}
-
-V<P<int, double>> QueryHNSW(V<double> &user, int ep, V<int> &indptr,
-                            V<int> &index, V<int> &level_offset, int max_level,
-                            V<V<double>> vect, int K) {
-  V<P<int, double>> topk;
-  topk.push_back(P<int, double>(ep, metric::cosine_dist(user, vect[ep])));
-  V<bool> visited(vect.size(), false);
-  visited[ep] = true;
-  for (int level = max_level; level >= 0; level--) {
-    topk = SearchLayer(user, topk, indptr, index, level_offset, level, visited,
-                       vect, K);
-  }
-  return topk;
-}
-}  // namespace hnsw
-
-void read_embeddings(std::string file_name, V<V<double>> &vect) {
-  std::ifstream fin(file_name, std::ios::in | std::ios::binary);
-  unsigned int num_lines, embedding_size = 0;
-  embedding_size = 768;
-  fin.read((char *)&num_lines, sizeof(num_lines));
-  fin.read((char *)&embedding_size, sizeof(embedding_size));
-  printf("Starting to read %d lines, with embedding size: %d\n", num_lines,
-         embedding_size);
-
-  int c = 0;
-  vect.push_back(V<double>());
-  while (fin.good()) {
-    if (c == embedding_size) {
-      vect.push_back(V<double>());
-      c = 0;
-    }
-    double num;
-    fin.read((char *)&num, sizeof(double));
-    vect.back().push_back(num);
-    c++;
-  }
-  fin.close();
-}
-
-void read_vect(std::string file_name, V<int> &vect) {
-  std::ifstream fin(file_name, std::ios::in);
-  std::string line;
-  while (std::getline(fin, line)) {
-    std::stringstream stream(line);
-    int temp;
-    while (stream >> temp) {
-      vect.push_back(temp);
-    }
-  }
-  fin.close();
-  printf("Read vector from %s\n", file_name.c_str());
-  // for (auto &a : vect) {
-  //   std::cout << a << " ";
-  // }
-  // std::cout << std::endl;
-}
-
-void read_int(std::string file_name, int &res) {
-  std::ifstream fin(file_name, std::ios::in);
-  fin >> res;
-  fin.close();
-  printf("Read int from %s : %d\n", file_name.c_str(), res);
-}
+#include "hnsw.hpp"
+#include "util.hpp"
 
 int main(int argc, char **argv) {
   std::string out_dir = argv[1];
@@ -142,21 +14,72 @@ int main(int argc, char **argv) {
   std::string out_file = argv[4];
   int max_level, ep;
   V<int> level, index, indptr, level_offset;
-  V<V<double>> user_embeddings, node_embeddings;
-  read_int(out_dir + "/max_level.txt", max_level);
-  read_int(out_dir + "/ep.txt", max_level);
-  read_vect(out_dir + "/level.txt", level);
-  read_vect(out_dir + "/index.txt", index);
-  read_vect(out_dir + "/indptr.txt", indptr);
-  read_vect(out_dir + "/level_offset.txt", level_offset);
-  read_embeddings("out_data/user.bin", user_embeddings);
-  // read_embeddings("out_data/vect.bin", user_embeddings);
-
-  // initialize MPI pipeline
+  V<V<double>> user_embeddings, news_embeddings;
   int size, rank;
   MPI_Init(NULL, NULL);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  // read users.bin and divide users
+
+  read_int(out_dir + "/max_level.txt", max_level);
+  read_int(out_dir + "/ep.txt", max_level);
+  read_vect(out_dir + "/level.bin", level);
+  read_vect(out_dir + "/index.bin", index);
+  read_vect(out_dir + "/indptr.bin", indptr);
+  read_vect(out_dir + "/level_offset.bin", level_offset);
+
+  unsigned int embedding_size, num_users, num_news;
+  get_embedding_info(out_dir + "/vect.bin", embedding_size, num_news);
+  get_embedding_info(out_dir + "/user.bin", embedding_size, num_users);
+  std::cout << embedding_size << " " << num_users << " " << num_news
+            << std::endl;
+  MPI_Datatype vector_t;
+  MPI_Type_contiguous(embedding_size, MPI_DOUBLE, &vector_t);
+  MPI_Type_commit(&vector_t);
+  V<V<double>> vect, user;
+  double *vect_buff, *user_buff;
+  auto begin = std::chrono::high_resolution_clock::now();
+  vect_buff = read_embeddings(out_dir + "/vect.bin", vect, rank, size, vector_t,
+                              num_news, embedding_size);
+  auto end = std::chrono::high_resolution_clock::now();
+  auto elapsed =
+      std::chrono::duration_cast<std::chrono::microseconds>(end - begin);
+  printf("Read vect embedding time: %ld\n", elapsed.count());
+
+  // std::cout << vect[num_news - 1][0] << " " << vect[num_news - 1][1] << " "
+  //           << vect[num_news - 1][2] << " " << vect[num_news - 1][3] << " "
+  //           << vect[num_news - 1][4] << std::endl;
+  // std::cout << std::endl;
+  begin = std::chrono::high_resolution_clock::now();
+
+  user_buff = read_embeddings(out_dir + "/user.bin", user, rank, size, vector_t,
+                              num_users, embedding_size);
+  end = std::chrono::high_resolution_clock::now();
+  elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - begin);
+  printf("Read user embedding time: %ld\n", elapsed.count());
+
+  // std::cout << user[5][0] << " " << user[5][1] << " " << user[5][2] << " "
+  //           << user[5][3] << " " << user[5][4] << std::endl;
+  // std::cout << std::endl;
+  MPI_Win window;
+  std::cout << "Rank and Size: " << rank << " " << size << std::endl;
+  unsigned int start_news = rank * num_news / size,
+               end_news = (rank + 1) * num_news / size,
+               start_user = rank * num_users / size,
+               end_user = (rank + 1) * num_users / size;
+  MPI_Win_create((void *)vect_buff, embedding_size * (end_news - start_news),
+                 embedding_size * sizeof(double), MPI_INFO_NULL, MPI_COMM_WORLD,
+                 &window);
+  MPI_Win_fence(0, window);
+#pragma omp parallel for
+  {
+    for (int i = start_user; i < end_user; i++) {
+      // use double buffer in place of vectors (user, vect)
+      V<P<int, double>> topk =
+          QueryHNSW(user_buff, ep, indptr, index, level_offset, max_level,
+                    vect_buff, K, start_news, end_news, num_news, size,
+                    embedding_size, vector_t, window);
+    }
+  }
+  MPI_Win_free(&window);
   MPI_Finalize();
 }
