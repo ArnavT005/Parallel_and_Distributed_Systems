@@ -1,6 +1,9 @@
 #include <bits/stdc++.h>
 #include <mpi.h>
 
+typedef unsigned int uint;
+typedef long long ll;
+
 template <typename T>
 using V = std::vector<T>;
 
