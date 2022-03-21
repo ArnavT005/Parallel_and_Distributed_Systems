@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include <mpi.h>
+#include <omp.h>
 
 typedef unsigned int uint;
 typedef long long ll;

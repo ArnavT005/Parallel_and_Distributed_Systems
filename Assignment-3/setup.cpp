@@ -1,4 +1,3 @@
-#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -65,9 +64,8 @@ void convert_to_binary(std::string in_dir, std::string out_dir,
 
 int main(int argc, char **argv) {
   std::string in_dir = argv[1], out_dir = argv[2];
-  // std::filesystem::create_directories(out_dir);
-  // convert_to_binary(in_dir, out_dir, "user");
-  // convert_to_binary(in_dir, out_dir, "vect");
+  convert_to_binary(in_dir, out_dir, "user");
+  convert_to_binary(in_dir, out_dir, "vect");
   write_vector_binary(in_dir, out_dir, "level");
   write_vector_binary(in_dir, out_dir, "level_offset");
   write_vector_binary(in_dir, out_dir, "index");
