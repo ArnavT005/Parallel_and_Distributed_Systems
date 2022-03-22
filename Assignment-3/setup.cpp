@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 
+#include "types.hpp"
 void write_vector_binary(std::string in_dir, std::string out_dir,
                          std::string file_name) {
   std::ifstream fin(in_dir + "/" + file_name + ".txt", std::ios::in);

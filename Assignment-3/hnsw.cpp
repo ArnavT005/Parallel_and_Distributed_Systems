@@ -35,7 +35,7 @@ V<P<int, double>> SearchLayer(double *user, V<P<int, double>> &candidates,
       visited[index[i]] = true;
       double _dist =
           cosine_dist(user, &vect[index[i] * embedding_size], embedding_size);
-      if (_dist > topk[0].first && topk.size() == K) {
+      if (_dist > topk[0].second && topk.size() == K) {
         continue;
       }
       topk.push_back(P<int, double>(index[i], _dist));
@@ -59,14 +59,12 @@ V<P<int, double>> QueryHNSW(double *user, int ep, V<int> &indptr, V<int> &index,
       ep, cosine_dist(user, &vect[ep * embedding_size], embedding_size)));
   V<bool> visited(num_lines, false);
   visited[ep] = true;
-  // std::cout << "max_level: " << max_level << std::endl;
   int thread_id = omp_get_thread_num();
   int rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
   for (int level = max_level; level >= 0; level--) {
     printf("[%d@%d] Calling search layer %d\n", thread_id, rank, level);
-    // printf("Calling search layer: %d\n", level);
     topk = SearchLayer(user, topk, indptr, index, level_offset, level, visited,
                        vect, K, num_lines, embedding_size);
   }

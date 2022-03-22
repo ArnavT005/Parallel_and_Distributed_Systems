@@ -1,8 +1,14 @@
+N?=2
+C?=5
+K?=10
 a.out: *.cpp *.hpp
-	mpic++ -fopenmp -g --std=c++17 main.cpp hnsw.cpp util.cpp
+	mpic++ -Ofast -fopenmp -g --std=c++17 main.cpp hnsw.cpp util.cpp
 run: a.out
-	mpirun --bind-to none ./a.out out_data 15 abc abc
+	/usr/bin/time -v mpirun --bind-to none ./a.out out_data $K abc out_data/preds/$N_$C_$K.txt 2>&1
 setup: setup.cpp
-	g++ -std=c++17 setup.cpp -o setup
+	mpic++ -fopenmp -std=c++17 setup.cpp -o setup
 run_setup: setup
 	./setup out_data out_data
+clean:
+	-rm a.out
+	-rm setup
