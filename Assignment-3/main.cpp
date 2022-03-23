@@ -36,6 +36,8 @@ int main(int argc, char **argv) {
   MPI_Type_contiguous(embedding_size, MPI_FLOAT, &vector_t);
   MPI_Type_commit(&vector_t);
   double *vect_buff, *user_buff;
+  V<double> users;
+
   auto begin = std::chrono::high_resolution_clock::now();
   vect_buff = read_embeddings(out_dir + "/vect.bin", rank, size, vector_t,
                               num_news, embedding_size);
@@ -44,11 +46,17 @@ int main(int argc, char **argv) {
       std::chrono::duration_cast<std::chrono::microseconds>(end - begin);
   printf("Read vect embedding time: %ld\n", elapsed.count());
   begin = std::chrono::high_resolution_clock::now();
+  uint start_news = rank * num_news / size,
+       end_news = (rank + 1) * num_news / size,
+       start_user = rank * num_users / size,
+       end_user = (rank + 1) * num_users / size;
   if (num_users == 0) {
-    V<double> users;
     read_embedding_txt(in_file, users);
     user_buff = users.data();
     num_users = users.size() / embedding_size;
+    start_user = rank * num_users / size;
+    end_user = (rank + 1) * num_users / size;
+    user_buff = user_buff + (start_user * embedding_size);
   } else {
     user_buff = read_embeddings(out_dir + "/user.bin", rank, size, vector_t,
                                 num_users, embedding_size);
@@ -57,10 +65,7 @@ int main(int argc, char **argv) {
   end = std::chrono::high_resolution_clock::now();
   elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - begin);
   printf("Read user embedding time: %ld\n", elapsed.count());
-  uint start_news = rank * num_news / size,
-       end_news = (rank + 1) * num_news / size,
-       start_user = rank * num_users / size,
-       end_user = (rank + 1) * num_users / size;
+
   V<int> counts, displacements;
   make_counts_displ(num_news, size, counts, displacements);
 
