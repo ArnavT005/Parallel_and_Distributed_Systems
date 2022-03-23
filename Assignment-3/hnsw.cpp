@@ -64,7 +64,7 @@ V<P<int, double>> QueryHNSW(double *user, int ep, V<int> &indptr, V<int> &index,
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
   for (int level = max_level; level >= 0; level--) {
-    printf("[%d@%d] Calling search layer %d\n", thread_id, rank, level);
+    // printf("[%d@%d] Calling search layer %d\n", thread_id, rank, level);
     topk = SearchLayer(user, topk, indptr, index, level_offset, level, visited,
                        vect, K, num_lines, embedding_size);
   }

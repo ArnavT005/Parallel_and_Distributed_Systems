@@ -13,3 +13,4 @@ void make_counts_displ(int total_count, int size, V<int> &counts,
                        V<int> &displacements);
 void write_txt_embeddings(std::string filepath, int *items, int num_items,
                           int item_size);
+void read_embedding_txt(std::string file_name, V<double> &vect);

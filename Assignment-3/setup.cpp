@@ -35,10 +35,16 @@ void write_vector_binary(std::string in_dir, std::string out_dir,
 void convert_to_binary(std::string in_dir, std::string out_dir,
                        std::string file_name) {
   std::ifstream fin(in_dir + "/" + file_name + ".txt", std::ios::in);
+  if (!fin) {
+    std::cerr << "Cannot open file: " << (in_dir + "/" + file_name + ".txt")
+              << std::endl;
+    return;
+  }
   std::ofstream fout(out_dir + "/" + file_name + ".bin",
                      std::ios::out | std::ios::binary | std::ios::ate);
   if (!fout) {
-    std::cerr << "Cannot open file" << std::endl;
+    std::cerr << "Cannot open file: " << (out_dir + "/" + file_name + ".bin")
+              << std::endl;
     return;
   }
   std::string line;
@@ -65,6 +71,7 @@ void convert_to_binary(std::string in_dir, std::string out_dir,
 
 int main(int argc, char **argv) {
   std::string in_dir = argv[1], out_dir = argv[2];
+
   convert_to_binary(in_dir, out_dir, "user");
   convert_to_binary(in_dir, out_dir, "vect");
   write_vector_binary(in_dir, out_dir, "level");

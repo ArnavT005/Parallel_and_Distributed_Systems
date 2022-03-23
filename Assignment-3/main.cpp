@@ -21,14 +21,15 @@ int main(int argc, char **argv) {
   // read data
   read_int(out_dir + "/max_level.txt", max_level);
   read_int(out_dir + "/ep.txt", ep);
-  read_vect(out_dir + "/level.bin", level);
+  // read_vect(out_dir + "/level.bin", level);
   read_vect(out_dir + "/index.bin", index);
   read_vect(out_dir + "/indptr.bin", indptr);
   read_vect(out_dir + "/level_offset.bin", level_offset);
   // read embeddings
-  uint embedding_size, num_users, num_news;
-  get_embedding_info(out_dir + "/vect.bin", embedding_size, num_news);
+  uint embedding_size = 0, num_users = 0, num_news = 0;
   get_embedding_info(out_dir + "/user.bin", embedding_size, num_users);
+  get_embedding_info(out_dir + "/vect.bin", embedding_size, num_news);
+
   // create datatype
   MPI_Datatype vector_t;
   // Datatype is float here
@@ -43,8 +44,16 @@ int main(int argc, char **argv) {
       std::chrono::duration_cast<std::chrono::microseconds>(end - begin);
   printf("Read vect embedding time: %ld\n", elapsed.count());
   begin = std::chrono::high_resolution_clock::now();
-  user_buff = read_embeddings(out_dir + "/user.bin", rank, size, vector_t,
-                              num_users, embedding_size);
+  if (num_users == 0) {
+    V<double> users;
+    read_embedding_txt(in_file, users);
+    user_buff = users.data();
+    num_users = users.size() / embedding_size;
+  } else {
+    user_buff = read_embeddings(out_dir + "/user.bin", rank, size, vector_t,
+                                num_users, embedding_size);
+  }
+
   end = std::chrono::high_resolution_clock::now();
   elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - begin);
   printf("Read user embedding time: %ld\n", elapsed.count());
@@ -63,8 +72,8 @@ int main(int argc, char **argv) {
   MPI_Type_contiguous(K, MPI_UNSIGNED, &items_t);
   MPI_Type_commit(&items_t);
   int *items = new int[(end_user - start_user) * K];
-  auto begin_1 = std::chrono::steady_clock::now();
-
+  printf("[%d] Starting process\n", rank);
+  // auto begin_1 = std::chrono::steady_clock::now();
 #pragma omp parallel
   {
 #pragma omp single
@@ -82,15 +91,17 @@ int main(int argc, char **argv) {
             std::pop_heap(topk.begin(), topk.begin() + j, comparePairMax());
             items[(i - start_user) * K + j - 1] = topk[j - 1].first;
           }
-          printf("[%d@%d] User %d done\n", thread_id, rank, i);
+          // printf("[%d@%d] User %d done\n", thread_id, rank, i);
         }
       }
     }
   }
-  auto end_1 = std::chrono::steady_clock::now();
-  auto elapsed_1 =
-      std::chrono::duration_cast<std::chrono::seconds>(end_1 - begin_1);
-  printf("[%d] Processing time: %ld\n", rank, elapsed_1.count());
+
+  // auto end_1 = std::chrono::steady_clock::now();
+
+  // auto elapsed_1 =
+  //     std::chrono::duration_cast<std::chrono::seconds>(end_1 - begin_1);
+  // printf("[%d] Processing time: %ld\n", rank, elapsed_1.count());
   int *all_items = nullptr;
   if (rank == 0) {
     all_items = new int[num_users * K];
@@ -105,11 +116,4 @@ int main(int argc, char **argv) {
     write_txt_embeddings(out_file, all_items, num_users, K);
   }
   MPI_Finalize();
-  delete items;
-  delete vect;
-  delete vect_buff;
-  delete user_buff;
-  if (rank == 0) {
-    delete all_items;
-  }
 }

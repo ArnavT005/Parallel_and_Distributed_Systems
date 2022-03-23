@@ -11,7 +11,7 @@ void read_vect(std::string file_name, V<int> &vect) {
   MPI_File fin;
   if (MPI_File_open(MPI_COMM_WORLD, file_name.c_str(), MPI_MODE_RDONLY,
                     MPI_INFO_NULL, &fin) != MPI_SUCCESS) {
-    printf("Unable to open file: %s", file_name.c_str());
+    printf("Unable to open file: %s\n", file_name.c_str());
     return;
   }
   MPI_File_seek(fin, 0, MPI_SEEK_SET);
@@ -32,7 +32,7 @@ void get_embedding_info(std::string file_name, uint &embedding_size,
   MPI_File fin;
   if (MPI_File_open(MPI_COMM_WORLD, file_name.c_str(), MPI_MODE_RDONLY,
                     MPI_INFO_NULL, &fin) != MPI_SUCCESS) {
-    printf("Unable to open file: %s", file_name.c_str());
+    printf("Unable to open file: %s\n", file_name.c_str());
     return;
   }
   MPI_File_seek(fin, 0, MPI_SEEK_SET);
@@ -41,13 +41,26 @@ void get_embedding_info(std::string file_name, uint &embedding_size,
   MPI_File_close(&fin);
 }
 
+void read_embedding_txt(std::string file_name, V<double> &vect) {
+  std::ifstream fin(file_name, std::ios::in);
+  std::string line;
+
+  while (std::getline(fin, line)) {
+    std::stringstream stream(line);
+    double temp;
+    while (stream >> temp) {
+      vect.push_back(temp);
+    }
+  }
+}
+
 double *read_embeddings(std::string file_name, int rank, int size,
                         MPI_Datatype &vector_t, uint num_lines,
                         uint embedding_size) {
   MPI_File fin;
   if (MPI_File_open(MPI_COMM_WORLD, file_name.c_str(), MPI_MODE_RDONLY,
                     MPI_INFO_NULL, &fin) != MPI_SUCCESS) {
-    printf("Unable to open file: %s", file_name.c_str());
+    printf("Unable to open file: %s\n", file_name.c_str());
     return nullptr;
   }
   int start = rank * num_lines / size;
