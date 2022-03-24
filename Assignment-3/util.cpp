@@ -19,7 +19,9 @@ void read_vect(std::string file_name, V<int> &vect) {
   MPI_File_read(fin, &num_elements, 1, MPI_UNSIGNED, MPI_STATUS_IGNORE);
   vect.resize(num_elements);
   MPI_Datatype vect_t;
-  MPI_Type_contiguous(num_elements, MPI_UNSIGNED, &vect_t);
+  ////////////////
+  MPI_Type_contiguous(num_elements, MPI_INT, &vect_t);
+  ////////////////
   MPI_Type_commit(&vect_t);
   MPI_File_read(fin, vect.data(), 1, vect_t, MPI_STATUS_IGNORE);
   MPI_File_close(&fin);
