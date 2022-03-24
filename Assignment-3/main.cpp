@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
       for (int i = start_user; i < end_user; i++) {
 #pragma omp task
         {
-          int thread_id = omp_get_thread_num();
+          // int thread_id = omp_get_thread_num();
 
           V<P<int, double>> topk =
               QueryHNSW(&user_buff[(i - start_user) * ((ll)embedding_size)], ep,

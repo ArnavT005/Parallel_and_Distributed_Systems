@@ -59,9 +59,9 @@ V<P<int, double>> QueryHNSW(double *user, int ep, V<int> &indptr, V<int> &index,
       ep, cosine_dist(user, &vect[ep * embedding_size], embedding_size)));
   V<bool> visited(num_lines, false);
   visited[ep] = true;
-  int thread_id = omp_get_thread_num();
-  int rank;
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  // int thread_id = omp_get_thread_num();
+  // int rank;
+  // MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
   for (int level = max_level; level >= 0; level--) {
     // printf("[%d@%d] Calling search layer %d\n", thread_id, rank, level);
