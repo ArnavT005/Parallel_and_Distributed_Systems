@@ -79,8 +79,8 @@
 Below is the analysis for our implementation on different experiments.
 We have reported the time it takes for the program to execute on $N$ nodes, $M$ cores,
 with program producing $K$ recommendations. The memory reported is a cumulative sum of the memory used on each node.
-We used the \verb|time| utility to measure the time taken for one run to complete. The verbose
-flag in the utility also lists the memory used by the program. Since the utility has no way of knowing the memory usage
+We used the \verb|time| utility to measure the time taken for one run to complete. There were 10000 users in the dataset provided and the average prediction time per user can be found below.
+The verbose flag in the utility also lists the memory used by the program. Since the utility has no way of knowing the memory usage
 across nodes, we had the memory usage for a single node. The implementation divides the work almost symmetrically and
 it is expected that the memory usage will be same for each node. The total memory is thus calculated by scaling the memory usage
 on one node with the number of nodes.
@@ -89,8 +89,7 @@ We also measured the time taken to complete the data setup part. This program ta
 text files in a folder and converts them to binary. The total time taken to convert all the text files to binary is
 around 10 minutes.
 
-We then calculated the precision and recall of our recommendations with the ground truth news ids. The following are the results
-for these metrics.
+We then calculated the precision and recall of our recommendations with the \textbf{provided} ground truth news items. The following are the metrics.
 
 \begin{table}[H]
   \centering
@@ -109,34 +108,34 @@ for these metrics.
   \begin{tabular}{|c|c|c|c|c|}
     \hline
 
-    Num nodes & Num cores & K  & Time(s) & Total Memory (GB) \\ \hline
-    2         & 5         & 10 & 0:18.76 & 13.56             \\
-    2         & 5         & 15 & 0:22.87 & 13.42             \\
-    2         & 5         & 5  & 0:17.77 & 13.55             \\
-    2         & 10        & 10 & 0:10.44 & 13.56             \\
-    2         & 10        & 15 & 0:11.93 & 13.56             \\
-    2         & 10        & 5  & 0:10.88 & 13.57             \\
-    2         & 24        & 10 & 0:08.41 & 13.58             \\
-    2         & 24        & 15 & 0:09.16 & 13.58             \\
-    2         & 24        & 5  & 0:09.10 & 13.58             \\
-    5         & 5         & 10 & 0:25.96 & 28.34             \\
-    5         & 5         & 15 & 0:18.31 & 28.34             \\
-    5         & 5         & 5  & 0:18.51 & 28.33             \\
-    5         & 10        & 10 & 0:08.65 & 28.33             \\
-    5         & 10        & 15 & 0:09.46 & 28.36             \\
-    5         & 10        & 5  & 0:15.51 & 28.35             \\
-    5         & 24        & 10 & 0:08.81 & 28.35             \\
-    5         & 24        & 15 & 0:08.97 & 28.36             \\
-    5         & 24        & 5  & 0:14.83 & 28.36             \\
-    10        & 5         & 10 & 0:11.33 & 52.95             \\
-    10        & 5         & 15 & 0:12.30 & 52.94             \\
-    10        & 5         & 5  & 0:18.62 & 52.95             \\
-    10        & 10        & 10 & 0:15.64 & 52.88             \\
-    10        & 10        & 15 & 0:16.37 & 52.84             \\
-    10        & 10        & 5  & 0:41.60 & 52.84             \\
-    10        & 24        & 10 & 0:09.92 & 52.97             \\
-    10        & 24        & 15 & 0:13.83 & 52.99             \\
-    10        & 24        & 5  & 0:18.09 & 52.96             \\
+    Num nodes & Num cores & K  & Time/user(ms) & Total Memory (GB) \\ \hline
+    2         & 5         & 10 & 1.876         & 13.56             \\
+    2         & 5         & 15 & 2.287         & 13.42             \\
+    2         & 5         & 5  & 1.777         & 13.55             \\
+    2         & 10        & 10 & 1.044         & 13.56             \\
+    2         & 10        & 15 & 1.193         & 13.56             \\
+    2         & 10        & 5  & 1.088         & 13.57             \\
+    2         & 24        & 10 & 0.841         & 13.58             \\
+    2         & 24        & 15 & 0.916         & 13.58             \\
+    2         & 24        & 5  & 0.910         & 13.58             \\
+    5         & 5         & 10 & 2.596         & 28.34             \\
+    5         & 5         & 15 & 1.831         & 28.34             \\
+    5         & 5         & 5  & 1.851         & 28.33             \\
+    5         & 10        & 10 & 0.865         & 28.33             \\
+    5         & 10        & 15 & 0.946         & 28.36             \\
+    5         & 10        & 5  & 1.551         & 28.35             \\
+    5         & 24        & 10 & 0.881         & 28.35             \\
+    5         & 24        & 15 & 0.897         & 28.36             \\
+    5         & 24        & 5  & 1.483         & 28.36             \\
+    10        & 5         & 10 & 1.133         & 52.95             \\
+    10        & 5         & 15 & 1.230         & 52.94             \\
+    10        & 5         & 5  & 1.862         & 52.95             \\
+    10        & 10        & 10 & 1.564         & 52.88             \\
+    10        & 10        & 15 & 1.637         & 52.84             \\
+    10        & 10        & 5  & 4.160         & 52.84             \\
+    10        & 24        & 10 & 0.992         & 52.97             \\
+    10        & 24        & 15 & 1.383         & 52.99             \\
+    10        & 24        & 5  & 1.809         & 52.96             \\
 
     \hline
   \end{tabular}

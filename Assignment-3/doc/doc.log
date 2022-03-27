@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2021.3.31)  27 MAR 2022 15:51
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2021.3.31)  27 MAR 2022 20:10
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -391,7 +391,7 @@ Package pdftex.def Info: iitdlogo.png  used on input line 53.
  [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} </home/harsh/Desktop/IITD/SEM6/COL380/Parallel_and_Distributed_Systems/Assignment-3/doc/iitdlogo.png>]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 146.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 145.
 
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -402,26 +402,26 @@ This may cause the page layout to be inconsistent, however.
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.146 \end{document}
+l.145 \end{document}
                      [1] [2]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 146.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 145.
  (/home/harsh/Desktop/IITD/SEM6/COL380/Parallel_and_Distributed_Systems/Assignment-3/doc/doc.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 146.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 146.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 145.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 145.
 Package rerunfilecheck Info: File `doc.out' has not changed.
 (rerunfilecheck)             Checksum: DF63E5304716B02F65D116D3A3494ACE;43.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 146.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 145.
  ) 
 Here is how much of TeX's memory you used:
- 9597 strings out of 483107
- 144977 string characters out of 5964630
+ 9598 strings out of 483107
+ 144992 string characters out of 5964630
  429732 words of memory out of 5000000
- 24465 multiletter control sequences out of 15000+600000
- 540779 words of font info for 54 fonts, out of 8000000 for 9000
+ 24466 multiletter control sequences out of 15000+600000
+ 541086 words of font info for 55 fonts, out of 8000000 for 9000
  59 hyphenation exceptions out of 8191
  48i,11n,46p,362b,406s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on /home/harsh/Desktop/IITD/SEM6/COL380/Parallel_and_Distributed_Systems/Assignment-3/doc/doc.pdf (3 pages, 110019 bytes).
+Output written on /home/harsh/Desktop/IITD/SEM6/COL380/Parallel_and_Distributed_Systems/Assignment-3/doc/doc.pdf (3 pages, 110839 bytes).
 PDF statistics:
  61 PDF objects out of 1000 (max. 8388607)
  45 compressed objects within 1 object stream

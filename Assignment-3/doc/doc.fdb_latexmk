@@ -1,8 +1,8 @@
 # Fdb version 3
-["pdflatex"] 1648376517 "/home/harsh/Desktop/IITD/SEM6/COL380/Parallel_and_Distributed_Systems/Assignment-3/doc/doc.tex" "/home/harsh/Desktop/IITD/SEM6/COL380/Parallel_and_Distributed_Systems/Assignment-3/doc/doc.pdf" "doc" 1648376518
+["pdflatex"] 1648392022 "/home/harsh/Desktop/IITD/SEM6/COL380/Parallel_and_Distributed_Systems/Assignment-3/doc/doc.tex" "/home/harsh/Desktop/IITD/SEM6/COL380/Parallel_and_Distributed_Systems/Assignment-3/doc/doc.pdf" "doc" 1648392022
   "/etc/texmf/web2c/texmf.cnf" 1614826758 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/harsh/Desktop/IITD/SEM6/COL380/Parallel_and_Distributed_Systems/Assignment-3/doc/doc.aux" 1648376518 1175 196fc8708255da3fd2bb1c43c0a0b9b8 ""
-  "/home/harsh/Desktop/IITD/SEM6/COL380/Parallel_and_Distributed_Systems/Assignment-3/doc/doc.tex" 1648376517 5675 6ae33eee91d5d152d5b955d2a7ae3a50 ""
+  "/home/harsh/Desktop/IITD/SEM6/COL380/Parallel_and_Distributed_Systems/Assignment-3/doc/doc.aux" 1648392022 1175 196fc8708255da3fd2bb1c43c0a0b9b8 ""
+  "/home/harsh/Desktop/IITD/SEM6/COL380/Parallel_and_Distributed_Systems/Assignment-3/doc/doc.tex" 1648392022 5953 398332c0c27a282bef22a729f9851e8f ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1246382020 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -94,14 +94,14 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1581979058 38841 ce3692aa899bb693b90b87eaa5d4d84e ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1617206199 165012 f177baa1c39a3ebd62c3096a43521a0d ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1617206217 4877422 f129898f44926ecff95f0f5719c499a8 ""
-  "doc.aux" 1648376518 1175 196fc8708255da3fd2bb1c43c0a0b9b8 "pdflatex"
-  "doc.out" 1648376518 43 df63e5304716b02f65d116d3a3494ace "pdflatex"
-  "doc.tex" 1648376517 5675 6ae33eee91d5d152d5b955d2a7ae3a50 ""
-  "iitdlogo.png" 1648376512 15802 9c9dfce082e873fb6f07be0015816d23 ""
+  "doc.aux" 1648392022 1175 196fc8708255da3fd2bb1c43c0a0b9b8 "pdflatex"
+  "doc.out" 1648392022 43 df63e5304716b02f65d116d3a3494ace "pdflatex"
+  "doc.tex" 1648392022 5953 398332c0c27a282bef22a729f9851e8f ""
+  "iitdlogo.png" 1648376913 15802 9c9dfce082e873fb6f07be0015816d23 ""
   (generated)
   "doc.pdf"
   "doc.aux"
-  "/home/harsh/Desktop/IITD/SEM6/COL380/Parallel_and_Distributed_Systems/Assignment-3/doc/doc.pdf"
-  "doc.log"
   "doc.out"
+  "doc.log"
   "/home/harsh/Desktop/IITD/SEM6/COL380/Parallel_and_Distributed_Systems/Assignment-3/doc/doc.log"
+  "/home/harsh/Desktop/IITD/SEM6/COL380/Parallel_and_Distributed_Systems/Assignment-3/doc/doc.pdf"

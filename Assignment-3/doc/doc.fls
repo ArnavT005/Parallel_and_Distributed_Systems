@@ -170,6 +170,7 @@ INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmsy6.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmtt12.tfm
+INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
 INPUT /home/harsh/Desktop/IITD/SEM6/COL380/Parallel_and_Distributed_Systems/Assignment-3/doc/doc.aux
 INPUT /home/harsh/Desktop/IITD/SEM6/COL380/Parallel_and_Distributed_Systems/Assignment-3/doc/doc.out
 INPUT /home/harsh/Desktop/IITD/SEM6/COL380/Parallel_and_Distributed_Systems/Assignment-3/doc/doc.out
