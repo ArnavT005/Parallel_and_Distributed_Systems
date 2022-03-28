@@ -9,7 +9,7 @@ int main(int argc, char** argv) {
     query_img = argv[2];
     th1 = std::stod(argv[3]);
     n = std::stoi(argv[4]);
-    matrix<0, 0, 0> data_mat, query_mat;
+    matrix data_mat, query_mat;
     read_img(data_img, data_mat);
     read_img(query_img, query_mat);
     T<int, int, int> data_sz = data_mat.shape(), query_sz = query_mat.shape();

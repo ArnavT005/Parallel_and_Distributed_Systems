@@ -1,7 +1,12 @@
 #include "img.hpp"
 
-template <uint R, uint C, uint K>
-matrix<R, C, K>::matrix() {
+
+matrix::matrix() {
+    mat.clear();
+    row = col = dim = 0;
+}
+
+matrix::matrix(int R, int C, int K) {
     mat.resize(R);
     for (int i = 0; i < R; i ++) {
         mat[i].resize(C);
@@ -17,13 +22,11 @@ matrix<R, C, K>::matrix() {
     dim = K;
 }
 
-template <uint R, uint C, uint K>
-V<V<int>> matrix<R, C, K>::operator[](int index) {
+V<V<int>> matrix::operator[](int index) {
     return mat[index];
 }
 
-template <uint R, uint C, uint K>
-void matrix<R, C, K>::resize(int row, int col, int dim, bool init, int val) {
+void matrix::resize(int row, int col, int dim, bool init, int val) {
     mat.resize(row);
     for (int i = 0; i < row; i ++) {
         mat[i].resize(col);
@@ -41,12 +44,11 @@ void matrix<R, C, K>::resize(int row, int col, int dim, bool init, int val) {
     this->dim = dim;
 }
 
-template <uint R, uint C, uint K>
-T<int, int, int> matrix<R, C, K>::shape() {
+T<int, int, int> matrix::shape() {
     return std::make_tuple(row, col, dim);
 }
 
-void read_img(std::string file_img, matrix<0, 0, 0>& mat) {
+void read_img(std::string file_img, matrix &mat) {
     std::string line;
     std::ifstream fin(file_img, std::ios::in);
     std::getline(fin, line);
@@ -58,6 +60,7 @@ void read_img(std::string file_img, matrix<0, 0, 0>& mat) {
     stream.str("");
     stream.clear();
     stream << line;
+    std::cout << row << " " << col << std::endl;
     for (int i = 0; i < row; i ++) {
         for (int j = 0; j < col; j ++) {
             int R, G, B;
