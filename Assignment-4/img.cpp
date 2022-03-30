@@ -63,7 +63,7 @@ unique_ptr<matrix<int>> imread(string file_img) {
     std::getline(fin, line);
     std::stringstream stream(line);
     int col, row;
-    stream >> col >> row;
+    stream >> row >> col;
     auto img_mat = make_unique<matrix<int>>(row, col, 3);
     std::getline(fin, line);
     stream.str("");

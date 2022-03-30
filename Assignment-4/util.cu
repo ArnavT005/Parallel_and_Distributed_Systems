@@ -53,6 +53,13 @@ void BB::rotate(int rot){
 
 }
 __device__
+int get_value(float* arr, int i, int j, int rows, int cols){
+  if(i < 0 || i >= rows || j < 0 || j >= cols){
+    return 255;
+  }
+  return arr[i*cols + j];
+}
+__device__
 int get_value(int* arr, int i, int j, int rows, int cols){
   if(i < 0 || i >= rows || j < 0 || j >= cols){
     return 255;
@@ -71,7 +78,7 @@ BB BB::intersect(const BB& other) const {
 }
 
 __device__
-float get_prefix_sum(const BB& bb, int rows, int cols,  int* ps_mat){
+float get_prefix_sum(const BB& bb, int rows, int cols,  float* ps_mat){
   auto mat_bb = BB{0,0,cols-1,rows-1};
   auto intersect_bb = bb.intersect(mat_bb);
   float ret = 0;

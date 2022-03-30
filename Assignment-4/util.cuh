@@ -28,7 +28,7 @@ __device__
 int get_value(int* arr, int i, int j, int rows, int cols);
 
 __device__
-float get_prefix_sum(const BB& bb, int rows, int cols,  int* ps_mat);
+float get_prefix_sum(const BB& bb, int rows, int cols, float* ps_mat);
 
 __device__
 float bilinear_interpolate(Point p, int rows, int cols, int* data);

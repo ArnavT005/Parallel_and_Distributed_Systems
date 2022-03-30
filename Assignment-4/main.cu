@@ -6,7 +6,7 @@
 
 
 __global__
-void find(float th1_cu, float th2_cu, int threadDimX, int threadDimY, int threadDimZ, int* data_cu, int* query_cu, float* prefixsum_cu, float graysum_cu, float* result_cu) {
+void find(float th1_cu, float th2_cu, int query_rows, int query_cols, int thread_count, int* data_cu, int* query_cu, float* prefixsum_cu, float graysum_cu, float* result_cu) {
     extern __shared__ float rmsd[];
     int row, col, rot, angle;
     row = blockIdx.x;
@@ -19,28 +19,48 @@ void find(float th1_cu, float th2_cu, int threadDimX, int threadDimY, int thread
     } else {
         angle = -45;
     }
-    printf("Row: %d, col: %d, rot: %d\n", row, col, rot);
-    // filter
+    // printf("Row: %d, col: %d, rot: %d\n", row, col, rot);
+    // auto bb = BB{col, row, query_cols, query_rows };
+    // bb.rotate(angle);
+    // auto ps = get_prefix_sum(bb, blockDim.x, blockDim.y, prefixsum_cu);
+    // if( abs(ps - graysum_cu) > th2_cu ){
+    //     return;
+    // }
+
+    int tid = threadIdx.x;
+    int chunk_sz = max(query_rows*query_cols/thread_count, 1);
+    int start = tid*chunk_sz;
+    int end = min(start+chunk_sz, query_rows*query_cols);
+    rmsd[tid] = 0;
     
-    //calculate rmsd
-    int dim = threadIdx.z;
-    Point rotated_point;
-    float data_px, query_px;
-    query_px = query_cu[threadIdx.x * threadDimY * threadDimZ + threadIdx.y * threadDimZ + threadIdx.z];
-    rotated_point = rotate_point(Point{(float) col, (float) row}, Point{(float) threadIdx.y, (float) threadIdx.x}, angle);
-    if (angle != 0) {
-        data_px = bilinear_interpolate(rotated_point, blockDim.x, blockDim.y, data_cu);
-    } else {
-        data_px = get_value(data_cu, rotated_point.y, rotated_point.x, blockDim.x, blockDim.y);
+    for(auto query_idx = start; query_idx < end; query_idx++){
+        int curr_col = ((query_idx / 3) % query_cols);
+        int curr_row = ((query_idx / 3) / query_cols);
+        
+        for(auto ch=0; ch < 3; ch++){
+            // filter
+            
+            //calculate rmsd
+            float data_px, query_px;
+            query_px = query_cu[query_idx + ch];
+            
+            auto rotated_point = rotate_point(Point{(float) col, (float) row}, Point{(float) curr_col, (float) curr_row}, angle);
+            if (angle != 0) {
+                data_px = bilinear_interpolate(rotated_point, blockDim.x, blockDim.y, data_cu);
+            } else {
+                data_px = get_value(data_cu, rotated_point.y, rotated_point.x, blockDim.x, blockDim.y);
+            }
+            rmsd[tid] += (data_px - query_px) * (data_px - query_px);
+        }
+        
     }
-    rmsd[threadIdx.x * threadDimY * threadDimZ + threadIdx.y * threadDimZ + threadIdx.z] = (data_px - query_px) * (data_px - query_px);
     __syncthreads();
-    if (threadIdx.x == 0 && threadIdx.y == 0 && threadIdx.z == 0) {
+    if (threadIdx.x == 0) {
         float rmsd_val = 0;
-        for (int i = 0; i < threadDimX * threadDimY * threadDimZ; i ++) {
+        for (int i = 0; i < thread_count; i ++) {
             rmsd_val += rmsd[i];
         }
-        result_cu[row * blockDim.y * blockDim.z + col * blockDim.z + rot] = sqrt(rmsd_val / (threadDimX * threadDimY * threadDimZ));
+        result_cu[row * blockDim.y * blockDim.z + col * blockDim.z + rot] = sqrt(rmsd_val / (query_rows*query_cols*3));
     }
 }
 
@@ -90,21 +110,20 @@ int main(int argc, char** argv) {
     cudaMemcpy(data_cu, data_mat->get(), data_mem * sizeof(int), cudaMemcpyHostToDevice);
     cudaMemcpy(query_cu, query_mat->get(), query_mem * sizeof(int), cudaMemcpyHostToDevice);
     cudaMemcpy(prefixsum_cu, prefixsum_mat->get(), (data_mem / std::get<2>(data_sz)) * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(result_cu, result_arr.data(), data_mem * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(result_cu, result_arr.data(), data_mem * sizeof(int), cudaMemcpyHostToDevice);
 
-    dim3 block_dim = dim3(std::get<0>(data_sz), std::get<1>(data_sz), 3);
-    dim3 thread_dim = dim3(std::get<0>(query_sz), std::get<1>(query_sz), std::get<2>(query_sz));
-    
-    //Invoke Kernel
-    saxpy<<<block_dim, dim3(10,10,10)>>>();
-    auto err = cudaDeviceSynchronize();
-    err = cudaGetLastError();
-    if (err != cudaSuccess) {
-        std::cerr << "Device Synchronize: " << cudaGetErrorString(err) << std::endl;
-    }
-    // find<<<block_dim, thread_dim, query_mem * sizeof(float)>>>(th1, th2, std::get<0>(query_sz), std::get<1>(query_sz), std::get<2>(query_sz), data_cu, query_cu, prefixsum_cu, graysum_val, result_cu);
+    dim3 block_dim = dim3(std::get<0>(data_sz), std::get<1>(data_sz), std::get<2>(data_sz));
+    dim3 thread_dim = dim3(std::min(1024, std::get<0>(query_sz) * std::get<1>(query_sz)));
+
+    // invoke kernel
+    find<<<block_dim, thread_dim, thread_dim.x * sizeof(float)>>>(th1, th2, std::get<0>(query_sz), std::get<1>(query_sz), thread_dim.x, data_cu, query_cu, prefixsum_cu, graysum_val, result_cu);
+    // cudaDeviceSynchronize();
     cudaMemcpy(result_arr.data(), result_cu, data_mem * sizeof(float), cudaMemcpyDeviceToHost);
     
+    auto err = cudaGetLastError();
+    if (err != cudaSuccess) {
+        std::cout << "CUDA Error: " << cudaGetErrorString(err) << std::endl;
+    }
     
     std::priority_queue<P<int, float>, V<P<int, float>>, comparePairMax> result_que;
     for (int i = 0; i < result_arr.size(); i ++) {
