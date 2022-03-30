@@ -20,9 +20,6 @@ using T = std::tuple<I, J, K>;
 template <typename T>
 using V = std::vector<T>;
 
-template <typename T, typename K>
-using Qmin = std::priority_queue<P<T, K>>;
-
 template <typename K>
 class matrix {
     private:
