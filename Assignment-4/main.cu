@@ -46,12 +46,16 @@ void find(float th2, int* query_cu, int query_rows, int query_cols, float graysu
     //     return;
     // }
     // printf("Row: %d, col: %d, rot: %d\n", row, col, rot);
-    // auto bb = BB{col, row, query_cols, query_rows };
-    // bb.rotate(angle);
-    // auto ps = get_prefix_sum(bb, blockDim.x, blockDim.y, prefixsum_cu);
-    // if( abs(ps - graysum_cu) > th2_cu ){
-    //     return;
-    // }
+    auto bb = BB{col, row, query_cols - 1, query_rows - 1};
+    bb.rotate(angle);
+    auto ps = get_prefix_sum(bb, gridDim.x, gridDim.y, prefixsum_cu);
+    ps /= ((bb.h + 1) * (bb.w + 1));
+    if( abs(ps - graysum_avg) >= th2){
+        if (col == 119 && rot == 1 && row == 119 && threadIdx.x == 0) {
+            printf("Gray: %f, %f\n", ps, graysum_avg);
+        }
+        return;
+    }
 
     int tid = threadIdx.x;
     int chunk_sz = 1;
@@ -88,6 +92,12 @@ void find(float th2, int* query_cu, int query_rows, int query_cols, float graysu
             rmsd_val += rmsd[i];
         }
         result_cu[row * gridDim.y * gridDim.z + col * gridDim.z + rot] = sqrt(rmsd_val / (query_rows * query_cols * 3));
+        // if (col == 118 && rot == 1 && row == 119) {
+        //     printf("118: %f\n", result_cu[row * gridDim.y * gridDim.z + col * gridDim.z + rot]);
+        // }
+        // if (col == 119 && rot == 1 && row == 119) {
+        //     printf("119: %f\n", result_cu[row * gridDim.y * gridDim.z + col * gridDim.z + rot]);
+        // }
     }
     
 }

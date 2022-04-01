@@ -5,59 +5,40 @@ Point rotate_point(Point anchor, Point grid_pos, int rot, int query_rows){
   if (rot == 0){
     return Point{anchor.x + grid_pos.x, anchor.y - (query_rows - 1) + grid_pos.y};
   }
-  float angle = (float)45 * M_PI/180;
-  float x, y;
-  if (rot == 45) {
-    x = (float)grid_pos.x * cos(angle) - ((float)(query_rows - 1 - grid_pos.y) * sin(angle));
-    y = -((float)grid_pos.x * sin(angle)) - ((float)(query_rows - 1 - grid_pos.y) * cos(angle));
-  } else {
-    x = (float)grid_pos.x * cos(angle) + (float)(query_rows - 1 - grid_pos.y) * sin(angle);
-    y = (float)grid_pos.x * sin(angle) - ((float)(query_rows - 1 - grid_pos.y) * cos(angle));
-  }
-  return Point{x + anchor.x, y + anchor.y};
+  float angle = (float)rot * M_PI/180;
+  float x = (float)grid_pos.x * cos(angle) - ((float)(query_rows - 1 - grid_pos.y) * sin(angle));
+  float y = -((float)grid_pos.x * sin(angle)) - ((float)(query_rows - 1 - grid_pos.y) * cos(angle));
+  return Point{anchor.x + x, anchor.y + y};
 }
 
 // rotate the bounding box by 45 degrees
-// __device__
-// void BB::rotate(int rot){
-//   //  switch(rot){
-//   //   case 45:
-//   //     float xr = x + (float)w/sqrt(2);
-//   //     float xl = x - (float)h/sqrt(2);
-//   //     float ht = y + (float)h/sqrt(2) + (float)w/sqrt(2);
-//   //     x = ceil(xl);
-//   //     y = y;
-//   //     w = (int)xr - x;
-//   //     h = (int)ht - y;
+__device__
+void BB::rotate(int rot){
+  auto anchor = Point{(float)x,(float)y};
+  auto p1 = rotate_point(anchor, Point{(float)w,(float) 0}, rot, h + 1);
+  auto p2 = rotate_point(anchor, Point{(float)0,(float)0}, rot, h + 1);
+  auto p3 = rotate_point(anchor, Point{(float)w,(float)h}, rot, h + 1);
+  auto p4 = rotate_point(anchor, Point{(float)0, (float)h}, rot, h + 1);
+  auto xl = min(p1.x, min(p2.x, min(p3.x, p4.x)));
+  auto xr = max(p1.x, max(p2.x, max(p3.x, p4.x)));
+  auto yt = max(p1.y, max(p2.y, max(p3.y, p4.y)));
+  auto yb = min(p1.y, min(p2.y, min(p3.y, p4.y)));
+  x = ceil(xl);
+  y = floor(yt);
+  w = floor(xr) - x;
+  h = y - ceil(yb);
+}
 
-//   //     break;
-//   //   case -45:
-//   //     float xr = x + (float)w/sqrt(2);
-//   //     float xl = x - (float)h/sqrt(2);
-//   //     float ht = y - (float)h/sqrt(2) - (float)w/sqrt(2);
-//   //     x = ceil(xl);
-//   //     y = y;
-//   //     w = (int)xr - x;
-//   //     h = ceil(ht) - y;
-//   //     break;
-//   //   default:
-//   //   break;
-//   // }
-//   // float angle = rot*M_PI/180;
-//   auto anchor = Point{(float)x,(float)y};
-//   auto p1 = rotate_point(anchor, Point{(float)x+w,(float)y}, rot);
-//   auto p2 = rotate_point(anchor, Point{(float)x+w,(float)y+h}, rot);
-//   auto p3 = rotate_point(anchor, Point{(float)x,(float)y+h}, rot);
-//   auto xl = min(p1.x, min(p2.x, p3.x));
-//   auto xr = max(p1.x, max(p2.x, p3.x));
-//   auto yt = max(p1.y, max(p2.y, p3.y));
-//   auto yb = min(p1.y, min(p2.y, p3.y));
-//   x = ceil(xl);
-//   y = ceil(yb);
-//   w = (int)xr - x;
-//   h = (int)yt - y;
+__device__
+BB BB::intersect(const BB& other) const {
+  BB ret;
+  ret.x = max(x, other.x);
+  ret.y = min(y, other.y);
+  ret.w = min(x+w, other.x+other.w) - ret.x;
+  ret.h = ret.y - max(y - h, other.y - other.h);
+  return ret;
+}
 
-// }
 __device__
 int get_value(float* arr, int i, int j, int rows, int cols){
   if(i < 0 || i >= rows || j < 0 || j >= cols){
@@ -74,28 +55,15 @@ int get_value(int* arr, int i, int j, int k, int rows, int cols){
 }
 
 __device__
-BB BB::intersect(const BB& other) const {
-  BB ret;
-  ret.x = max(x, other.x);
-  ret.y = max(y, other.y);
-  ret.w = min(x+w, other.x+other.w) - ret.x;
-  ret.h = min(y+h, other.y+other.h) - ret.y;
-  return ret;
-}
-
-__device__
 float get_prefix_sum(const BB& bb, int rows, int cols,  float* ps_mat){
-  auto mat_bb = BB{0,0,cols-1,rows-1};
+  auto mat_bb = BB{0, rows - 1, cols-1, rows-1};
   auto intersect_bb = bb.intersect(mat_bb);
   float ret = 0;
-  ret += get_value(ps_mat, intersect_bb.y, intersect_bb.x, rows, cols);
-  ret += get_value(ps_mat, intersect_bb.y+intersect_bb.h, intersect_bb.x+intersect_bb.w, rows, cols);
-  ret -= get_value(ps_mat, intersect_bb.y+intersect_bb.h, intersect_bb.x, rows, cols);
-  ret -= get_value(ps_mat, intersect_bb.y, intersect_bb.x+intersect_bb.w, rows, cols);
-  auto remaining_pixels = bb.w*bb.h - intersect_bb.w * intersect_bb.h;
-  ret += remaining_pixels*255;
+  ret += get_value(ps_mat, intersect_bb.y, intersect_bb.x+intersect_bb.w, rows, cols);
+  ret -= get_value(ps_mat, intersect_bb.y, intersect_bb.x - 1, rows, cols);
+  ret -= get_value(ps_mat, intersect_bb.y-intersect_bb.h - 1, intersect_bb.x + intersect_bb.w, rows, cols);
+  ret += get_value(ps_mat, intersect_bb.y - intersect_bb.h - 1, intersect_bb.x - 1, rows, cols);
   return ret;
-
 }
 
 
