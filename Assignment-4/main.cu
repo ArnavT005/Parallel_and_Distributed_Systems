@@ -6,7 +6,7 @@
 
 
 __global__
-void find(float th1_cu, float th2_cu, int query_rows, int query_cols, int thread_count, int* data_cu, int* query_cu, float* prefixsum_cu, float graysum_cu, float* result_cu) {
+void find(float th2, int* query_cu, int query_rows, int query_cols, float graysum_avg, int* data_cu, float* prefixsum_cu, float* result_cu) {
     extern __shared__ float rmsd[];
     int row, col, rot, angle;
     row = blockIdx.x;
@@ -19,6 +19,32 @@ void find(float th1_cu, float th2_cu, int query_rows, int query_cols, int thread
     } else {
         angle = -45;
     }
+    // Point p1, p2, p3, p4;
+    // p1 = rotate_point(Point{(float) col, (float) row}, Point{(float) 0, (float) 0}, angle, query_rows);
+    // p2 = rotate_point(Point{(float) col, (float) row}, Point{(float) query_cols - 1, (float) 0}, angle, query_rows);
+    // p3 = rotate_point(Point{(float) col, (float) row}, Point{(float) 0, (float) query_rows - 1}, angle, query_rows);
+    // p4 = rotate_point(Point{(float) col, (float) row}, Point{(float) query_cols - 1, (float) query_rows - 1}, angle, query_rows);
+    // float x_min, x_max, y_min, y_max;
+    
+    // if (angle == 0) {
+    //     x_min = p1.x;
+    //     x_max = p2.x;
+    //     y_min = p1.y;
+    //     y_max = p3.y;
+    // } else if (angle == 45) {
+    //     x_min = p1.x;
+    //     x_max = p4.x;
+    //     y_min = p2.y;
+    //     y_max = p3.y;
+    // } else {
+    //     x_min = p3.x;
+    //     x_max = p2.x;
+    //     y_min = p1.y;
+    //     y_max = p4.y;
+    // }
+    // if (!(x_min >= 0 && x_max <= gridDim.y - 1 && y_min >= 0 && y_max <= gridDim.x - 1)) {
+    //     return;
+    // }
     // printf("Row: %d, col: %d, rot: %d\n", row, col, rot);
     // auto bb = BB{col, row, query_cols, query_rows };
     // bb.rotate(angle);
@@ -28,40 +54,42 @@ void find(float th1_cu, float th2_cu, int query_rows, int query_cols, int thread
     // }
 
     int tid = threadIdx.x;
-    int chunk_sz = max(query_rows*query_cols/thread_count, 1);
-    int start = tid*chunk_sz;
-    int end = min(start+chunk_sz, query_rows*query_cols);
-    rmsd[tid] = 0;
+    int chunk_sz = 1;
+    if (query_rows * query_cols > blockDim.x) {
+        if ((query_rows * query_cols) % blockDim.x == 0) {
+            chunk_sz = (query_rows * query_cols) / blockDim.x;
+        } else {
+            chunk_sz = (query_rows * query_cols) / blockDim.x + 1;
+        }
+    }
+    int start = tid * chunk_sz, end = min(start + chunk_sz, query_rows * query_cols);
+    rmsd[tid] = 0.0f;
     
     for(auto query_idx = start; query_idx < end; query_idx++){
-        int curr_col = ((query_idx / 3) % query_cols);
-        int curr_row = ((query_idx / 3) / query_cols);
-        
+        int curr_col = query_idx % query_cols;
+        int curr_row = query_idx / query_cols;
         for(auto ch=0; ch < 3; ch++){
-            // filter
-            
-            //calculate rmsd
             float data_px, query_px;
-            query_px = query_cu[query_idx + ch];
+            query_px = query_cu[query_idx * 3 + ch];
             
-            auto rotated_point = rotate_point(Point{(float) col, (float) row}, Point{(float) curr_col, (float) curr_row}, angle);
+            auto rotated_point = rotate_point(Point{(float) col, (float) row}, Point{(float) curr_col, (float) curr_row}, angle, query_rows);
             if (angle != 0) {
-                data_px = bilinear_interpolate(rotated_point, blockDim.x, blockDim.y, data_cu);
+                data_px = bilinear_interpolate(rotated_point, ch, gridDim.x, gridDim.y, data_cu);
             } else {
-                data_px = get_value(data_cu, rotated_point.y, rotated_point.x, blockDim.x, blockDim.y);
+                data_px = get_value(data_cu, rotated_point.y, rotated_point.x, ch, gridDim.x, gridDim.y);
             }
             rmsd[tid] += (data_px - query_px) * (data_px - query_px);
         }
-        
     }
     __syncthreads();
     if (threadIdx.x == 0) {
         float rmsd_val = 0;
-        for (int i = 0; i < thread_count; i ++) {
+        for (int i = 0; i < blockDim.x; i ++) {
             rmsd_val += rmsd[i];
         }
-        result_cu[row * blockDim.y * blockDim.z + col * blockDim.z + rot] = sqrt(rmsd_val / (query_rows*query_cols*3));
+        result_cu[row * gridDim.y * gridDim.z + col * gridDim.z + rot] = sqrt(rmsd_val / (query_rows * query_cols * 3));
     }
+    
 }
 
 struct comparePairMax {
@@ -88,15 +116,17 @@ int main(int argc, char** argv) {
     auto data_mat = imread(data_img);
     auto query_mat = imread(query_img);
     T<int, int, int> data_sz = data_mat->shape(), query_sz = query_mat->shape();
-    std::cout << "Data Image: " << std::get<0>(data_sz) << " " << std::get<1>(data_sz) << " " << std::get<2>(data_sz) << std::endl;
-    std::cout << "Query Image: " << std::get<0>(query_sz) << " " << std::get<1>(query_sz) << " " << std::get<2>(query_sz) << std::endl;
+    int data_rows = std::get<0>(data_sz), data_cols = std::get<1>(data_sz), data_dim = std::get<2>(data_sz);
+    int query_rows = std::get<0>(query_sz), query_cols = std::get<1>(query_sz), query_dim = std::get<2>(query_sz);
 
-    int data_mem = std::get<0>(data_sz) * std::get<1>(data_sz) * std::get<2>(data_sz);
-    int query_mem = std::get<0>(query_sz) * std::get<1>(query_sz) * std::get<2>(query_sz);
+    std::cout << "Data Image: " << data_rows << " " << data_cols << " " << data_dim << std::endl;
+    std::cout << "Query Image: " << query_rows << " " << query_cols << " " << query_dim << std::endl;
 
-    auto gray_data_mat = rbg2gray(data_mat.get());
+    int data_mem = data_rows * data_cols * data_dim, query_mem = query_rows * query_cols * query_dim;
+
+    auto gray_data_mat = rgb2gray(data_mat.get());
     auto prefixsum_mat = prefixsum(gray_data_mat.get());
-    auto graysum_val = graysum(query_mat.get());
+    auto graysum_avg = graysum(query_mat.get());
 
     V<float> result_arr(data_mem, std::numeric_limits<float>::max());
 
@@ -104,20 +134,19 @@ int main(int argc, char** argv) {
     float *prefixsum_cu, *result_cu;
     cudaMalloc(&data_cu, data_mem * sizeof(int)); 
     cudaMalloc(&query_cu, query_mem * sizeof(int));
-    cudaMalloc(&prefixsum_cu, (data_mem / std::get<2>(data_sz)) * sizeof(float));
-    cudaMalloc(&result_cu, data_mem * sizeof(float));
+    cudaMalloc(&prefixsum_cu, data_rows * data_cols * sizeof(float));
+    cudaMalloc(&result_cu, data_rows * data_cols * 3 * sizeof(float));
 
     cudaMemcpy(data_cu, data_mat->get(), data_mem * sizeof(int), cudaMemcpyHostToDevice);
     cudaMemcpy(query_cu, query_mat->get(), query_mem * sizeof(int), cudaMemcpyHostToDevice);
-    cudaMemcpy(prefixsum_cu, prefixsum_mat->get(), (data_mem / std::get<2>(data_sz)) * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(result_cu, result_arr.data(), data_mem * sizeof(int), cudaMemcpyHostToDevice);
+    cudaMemcpy(prefixsum_cu, prefixsum_mat->get(), data_rows * data_cols * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(result_cu, result_arr.data(), data_rows * data_cols * 3 * sizeof(float), cudaMemcpyHostToDevice);
 
-    dim3 block_dim = dim3(std::get<0>(data_sz), std::get<1>(data_sz), std::get<2>(data_sz));
-    dim3 thread_dim = dim3(std::min(1024, std::get<0>(query_sz) * std::get<1>(query_sz)));
+    dim3 grid_dim = dim3(data_rows, data_cols, 3);
+    dim3 block_dim = dim3(std::min(1024, query_rows * query_cols));
 
     // invoke kernel
-    find<<<block_dim, thread_dim, thread_dim.x * sizeof(float)>>>(th1, th2, std::get<0>(query_sz), std::get<1>(query_sz), thread_dim.x, data_cu, query_cu, prefixsum_cu, graysum_val, result_cu);
-    // cudaDeviceSynchronize();
+    find<<<grid_dim, block_dim, block_dim.x * sizeof(float)>>>(th2, query_cu, query_rows, query_cols, graysum_avg, data_cu, prefixsum_cu, result_cu);
     cudaMemcpy(result_arr.data(), result_cu, data_mem * sizeof(float), cudaMemcpyDeviceToHost);
     
     auto err = cudaGetLastError();
@@ -136,28 +165,28 @@ int main(int argc, char** argv) {
             if (result_arr[i] >= result_que.top().second) {
                 continue;
             } else {
-                result_que.push(P<int, float>(i, result_arr[i]));
                 result_que.pop();
+                result_que.push(P<int, float>(i, result_arr[i]));
             }
         }
     }
     
     V<T<int, int, int>> output(n);
-    int index = result_que.size() - 1, output_sz = index + 1;
+    int output_sz = result_que.size(), index = output_sz - 1;
     std::ofstream fout("output.txt", std::ios::out);
     while (!result_que.empty()) {
         P<int, float> temp = result_que.top();
         result_que.pop();
         int row, col, rot;
-        row = temp.first / (std::get<1>(data_sz) * std::get<2>(data_sz));
-        col = (temp.first / (std::get<2>(data_sz))) % std::get<1>(data_sz);
-        rot = temp.first % std::get<2>(data_sz);
+        row = temp.first / (data_cols * data_dim);
+        col = (temp.first / data_dim) % data_cols;
+        rot = temp.first % data_dim;
         if (rot == 1) {
             rot = 45;
         } else if (rot == 2) {
             rot = -45;
         }
-        output[index] = T<int, int, int>(row, col, rot);
+        output[index] = T<int, int, int>(data_rows - 1 - row, col, rot);
         index --;
     }
     for (int i = 0; i < output_sz; i ++) {

@@ -62,14 +62,13 @@ unique_ptr<matrix<int>> imread(string file_img) {
     std::ifstream fin(file_img, std::ios::in);
     std::getline(fin, line);
     std::stringstream stream(line);
-    int col, row;
+    int row, col;
     stream >> row >> col;
     auto img_mat = make_unique<matrix<int>>(row, col, 3);
     std::getline(fin, line);
     stream.str("");
     stream.clear();
     stream << line;
-    std::cout << row << " " << col << std::endl;
     for (int i = 0; i < row; i ++) {
         for (int j = 0; j < col; j ++) {
             int R, G, B;
@@ -82,7 +81,7 @@ unique_ptr<matrix<int>> imread(string file_img) {
     return move(img_mat);
 }
 
-unique_ptr<matrix<float>> rbg2gray(matrix<int>* img){
+unique_ptr<matrix<float>> rgb2gray(matrix<int>* img){
     auto shape = img->shape();
     auto row = std::get<0>(shape);
     auto col = std::get<1>(shape);
@@ -99,7 +98,6 @@ unique_ptr<matrix<float>> rbg2gray(matrix<int>* img){
         }
     }
     return move(gray_img);
-
 }
 
 float graysum(matrix<int>* img){
@@ -114,7 +112,7 @@ float graysum(matrix<int>* img){
             for(int k = 0; k < dim; k++){
                 dim_sum += img->get(i,j,k);
             }
-            sum += float(dim_sum/dim);
+            sum += dim_sum / dim;
         }
     }
     sum /= (row * col);
