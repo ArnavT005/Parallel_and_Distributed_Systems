@@ -38,9 +38,15 @@ class matrix {
 template class matrix<int>;
 template class matrix<float>;
 
-unique_ptr<matrix<int>> imread(string);
-unique_ptr<matrix<float>> rgb2gray(matrix<int>*);
+// unique_ptr<matrix<int>> imread(string);
+// unique_ptr<matrix<float>> rgb2gray(matrix<int>*);
+// float graysum(matrix<int>*);
+
+// // Prefix sum for 2D matrices
+// unique_ptr<matrix<float>> prefixsum(matrix<float>*);
+matrix<int>* imread(string);
+matrix<float>* rgb2gray(matrix<int>*);
 float graysum(matrix<int>*);
 
 // Prefix sum for 2D matrices
-unique_ptr<matrix<float>> prefixsum(matrix<float>*);
+matrix<float>* prefixsum(matrix<float>*);

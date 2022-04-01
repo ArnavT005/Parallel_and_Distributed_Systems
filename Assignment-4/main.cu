@@ -92,12 +92,6 @@ void find(float th2, int* query_cu, int query_rows, int query_cols, float graysu
             rmsd_val += rmsd[i];
         }
         result_cu[row * gridDim.y * gridDim.z + col * gridDim.z + rot] = sqrt(rmsd_val / (query_rows * query_cols * 3));
-        // if (col == 118 && rot == 1 && row == 119) {
-        //     printf("118: %f\n", result_cu[row * gridDim.y * gridDim.z + col * gridDim.z + rot]);
-        // }
-        // if (col == 119 && rot == 1 && row == 119) {
-        //     printf("119: %f\n", result_cu[row * gridDim.y * gridDim.z + col * gridDim.z + rot]);
-        // }
     }
     
 }
@@ -134,9 +128,9 @@ int main(int argc, char** argv) {
 
     int data_mem = data_rows * data_cols * data_dim, query_mem = query_rows * query_cols * query_dim;
 
-    auto gray_data_mat = rgb2gray(data_mat.get());
-    auto prefixsum_mat = prefixsum(gray_data_mat.get());
-    auto graysum_avg = graysum(query_mat.get());
+    auto gray_data_mat = rgb2gray(data_mat);
+    auto prefixsum_mat = prefixsum(gray_data_mat);
+    auto graysum_avg = graysum(query_mat);
 
     V<float> result_arr(data_mem, std::numeric_limits<float>::max());
 

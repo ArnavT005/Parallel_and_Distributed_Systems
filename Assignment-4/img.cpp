@@ -57,14 +57,37 @@ T<int, int, int> matrix<K>::shape() {
     return std::make_tuple(row, col, dim);
 }
 
-unique_ptr<matrix<int>> imread(string file_img) {
+// unique_ptr<matrix<int>> imread(string file_img) {
+//     std::string line;
+//     std::ifstream fin(file_img, std::ios::in);
+//     std::getline(fin, line);
+//     std::stringstream stream(line);
+//     int row, col;
+//     stream >> row >> col;
+//     auto img_mat = make_unique<matrix<int>>(row, col, 3);
+//     std::getline(fin, line);
+//     stream.str("");
+//     stream.clear();
+//     stream << line;
+//     for (int i = 0; i < row; i ++) {
+//         for (int j = 0; j < col; j ++) {
+//             int R, G, B;
+//             stream >> R >> G >> B;
+//             img_mat->set(i, j, 0, R);
+//             img_mat->set(i, j, 1, G);
+//             img_mat->set(i, j, 2, B);
+//         }
+//     }
+//     return move(img_mat);
+// }
+matrix<int>* imread(string file_img) {
     std::string line;
     std::ifstream fin(file_img, std::ios::in);
     std::getline(fin, line);
     std::stringstream stream(line);
     int row, col;
     stream >> row >> col;
-    auto img_mat = make_unique<matrix<int>>(row, col, 3);
+    auto img_mat = new matrix<int>(row, col, 3);
     std::getline(fin, line);
     stream.str("");
     stream.clear();
@@ -78,16 +101,16 @@ unique_ptr<matrix<int>> imread(string file_img) {
             img_mat->set(i, j, 2, B);
         }
     }
-    return move(img_mat);
+    return img_mat;
 }
 
-unique_ptr<matrix<float>> rgb2gray(matrix<int>* img){
+matrix<float>* rgb2gray(matrix<int>* img){
     auto shape = img->shape();
     auto row = std::get<0>(shape);
     auto col = std::get<1>(shape);
     auto dim = std::get<2>(shape);
 
-    auto gray_img = make_unique<matrix<float>>(row, col, 1);
+    auto gray_img = new matrix<float>(row, col, 1);
     for (int i = 0; i < row; i ++) {
         for (int j = 0; j < col; j ++) {
             int R = img->get(i, j, 0);
@@ -97,7 +120,7 @@ unique_ptr<matrix<float>> rgb2gray(matrix<int>* img){
             gray_img->set(i, j, 0, gray);
         }
     }
-    return move(gray_img);
+    return gray_img;
 }
 
 float graysum(matrix<int>* img){
@@ -120,7 +143,7 @@ float graysum(matrix<int>* img){
 }
 
 
-unique_ptr<matrix<float>> prefixsum(matrix<float>* img){
+matrix<float>* prefixsum(matrix<float>* img){
     auto shape = img->shape();
     auto row = std::get<0>(shape);
     auto col = std::get<1>(shape);
@@ -128,7 +151,7 @@ unique_ptr<matrix<float>> prefixsum(matrix<float>* img){
 
     assert(dim == 1);
 
-    auto ps = make_unique<matrix<float>>();
+    auto ps = new matrix<float>();
     ps->resize(row, col, 1, true, 0.0f);
     for (int i = 0; i < row; i ++) {
         for (int j = 0; j < col; j ++) {
