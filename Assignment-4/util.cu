@@ -11,34 +11,6 @@ Point rotate_point(Point anchor, Point grid_pos, int rot, int query_rows){
   return Point{anchor.x + x, anchor.y + y};
 }
 
-// rotate the bounding box by 45 degrees
-__device__
-void BB::rotate(int rot){
-  auto anchor = Point{(float)x,(float)y};
-  auto p1 = rotate_point(anchor, Point{(float)w,(float) 0}, rot, h + 1);
-  auto p2 = rotate_point(anchor, Point{(float)0,(float)0}, rot, h + 1);
-  auto p3 = rotate_point(anchor, Point{(float)w,(float)h}, rot, h + 1);
-  auto p4 = rotate_point(anchor, Point{(float)0, (float)h}, rot, h + 1);
-  auto xl = min(p1.x, min(p2.x, min(p3.x, p4.x)));
-  auto xr = max(p1.x, max(p2.x, max(p3.x, p4.x)));
-  auto yt = max(p1.y, max(p2.y, max(p3.y, p4.y)));
-  auto yb = min(p1.y, min(p2.y, min(p3.y, p4.y)));
-  x = ceil(xl);
-  y = floor(yt);
-  w = floor(xr) - x;
-  h = y - ceil(yb);
-}
-
-__device__
-BB BB::intersect(const BB& other) const {
-  BB ret;
-  ret.x = max(x, other.x);
-  ret.y = min(y, other.y);
-  ret.w = min(x+w, other.x+other.w) - ret.x;
-  ret.h = ret.y - max(y - h, other.y - other.h);
-  return ret;
-}
-
 __device__
 int get_value(float* arr, int i, int j, int rows, int cols){
   if(i < 0 || i >= rows || j < 0 || j >= cols){
@@ -65,7 +37,6 @@ float get_prefix_sum(const BB& bb, int rows, int cols,  float* ps_mat){
   ret += get_value(ps_mat, intersect_bb.y - intersect_bb.h - 1, intersect_bb.x - 1, rows, cols);
   return ret;
 }
-
 
 __device__
 float bilinear_interpolate(Point p, int ch, int rows, int cols, int* data){
@@ -99,6 +70,33 @@ float bilinear_interpolate(Point p, int ch, int rows, int cols, int* data){
   y_inv_frac = 1 - y_frac;
   
   float ret = (bl_val * x_inv_frac + br_val * x_frac) * y_inv_frac + (tl_val * x_inv_frac + tr_val * x_frac) * y_frac;
+  return ret;
+}
+
+__device__
+void BB::rotate(int rot){
+  auto anchor = Point{(float)x,(float)y};
+  auto p1 = rotate_point(anchor, Point{(float)w,(float) 0}, rot, h + 1);
+  auto p2 = rotate_point(anchor, Point{(float)0,(float)0}, rot, h + 1);
+  auto p3 = rotate_point(anchor, Point{(float)w,(float)h}, rot, h + 1);
+  auto p4 = rotate_point(anchor, Point{(float)0, (float)h}, rot, h + 1);
+  auto xl = min(p1.x, min(p2.x, min(p3.x, p4.x)));
+  auto xr = max(p1.x, max(p2.x, max(p3.x, p4.x)));
+  auto yt = max(p1.y, max(p2.y, max(p3.y, p4.y)));
+  auto yb = min(p1.y, min(p2.y, min(p3.y, p4.y)));
+  x = ceil(xl);
+  y = floor(yt);
+  w = floor(xr) - x;
+  h = y - ceil(yb);
+}
+
+__device__
+BB BB::intersect(const BB& other) const {
+  BB ret;
+  ret.x = max(x, other.x);
+  ret.y = min(y, other.y);
+  ret.w = min(x+w, other.x+other.w) - ret.x;
+  ret.h = ret.y - max(y - h, other.y - other.h);
   return ret;
 }
 

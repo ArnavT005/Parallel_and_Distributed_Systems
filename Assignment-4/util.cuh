@@ -1,5 +1,8 @@
+#pragma once
+
 #include <math.h>
 #include "img.hpp"
+
 __device__
 struct BB{
     // Bottom left x
@@ -15,7 +18,6 @@ struct BB{
     void rotate(int rot);
   __device__
     BB intersect(const BB& other) const;
-    
 };
 
 __device__

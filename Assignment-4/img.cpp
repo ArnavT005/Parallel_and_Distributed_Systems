@@ -57,29 +57,6 @@ T<int, int, int> matrix<K>::shape() {
     return std::make_tuple(row, col, dim);
 }
 
-// unique_ptr<matrix<int>> imread(string file_img) {
-//     std::string line;
-//     std::ifstream fin(file_img, std::ios::in);
-//     std::getline(fin, line);
-//     std::stringstream stream(line);
-//     int row, col;
-//     stream >> row >> col;
-//     auto img_mat = make_unique<matrix<int>>(row, col, 3);
-//     std::getline(fin, line);
-//     stream.str("");
-//     stream.clear();
-//     stream << line;
-//     for (int i = 0; i < row; i ++) {
-//         for (int j = 0; j < col; j ++) {
-//             int R, G, B;
-//             stream >> R >> G >> B;
-//             img_mat->set(i, j, 0, R);
-//             img_mat->set(i, j, 1, G);
-//             img_mat->set(i, j, 2, B);
-//         }
-//     }
-//     return move(img_mat);
-// }
 matrix<int>* imread(string file_img) {
     std::string line;
     std::ifstream fin(file_img, std::ios::in);
@@ -169,6 +146,6 @@ matrix<float>* prefixsum(matrix<float>* img){
             ps->set(i, j, 0, sum);
         }
     }
-    return move(ps);
+    return ps;
 }
 

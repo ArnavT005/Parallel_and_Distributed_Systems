@@ -3,6 +3,7 @@
 #include <algorithm>
 #include "img.hpp"
 #include "util.cuh"
+#include <chrono>
 
 
 __global__
@@ -86,14 +87,25 @@ void find(float th2, int* query_cu, int query_rows, int query_cols, float graysu
         }
     }
     __syncthreads();
-    if (threadIdx.x == 0) {
-        float rmsd_val = 0;
-        for (int i = 0; i < blockDim.x; i ++) {
-            rmsd_val += rmsd[i];
+    int step = 2, thread_count = blockDim.x;
+    while (thread_count > 1) {
+        if (tid % step == 0) {
+            rmsd[tid] += rmsd[tid + (step / 2)];
         }
-        result_cu[row * gridDim.y * gridDim.z + col * gridDim.z + rot] = sqrt(rmsd_val / (query_rows * query_cols * 3));
+        step *= 2;
+        thread_count /= 2;
+        __syncthreads();
     }
-    
+    if (tid == 0) {
+        result_cu[row * gridDim.y * gridDim.z + col * gridDim.z + rot] = sqrt(rmsd[tid] / (query_rows * query_cols * 3));
+    }
+    // if (threadIdx.x == 0) {
+    //     float rmsd_val = 0;
+    //     for (int i = 0; i < blockDim.x; i ++) {
+    //         rmsd_val += rmsd[i];
+    //     }
+    //     result_cu[row * gridDim.y * gridDim.z + col * gridDim.z + rot] = sqrt(rmsd_val / (query_rows * query_cols * 3));
+    // }
 }
 
 struct comparePairMax {
@@ -175,7 +187,7 @@ int main(int argc, char** argv) {
         }
     }
     
-    V<T<int, int, int>> output(n);
+    V<std::tuple<int, int, int, float>> output(n);
     int output_sz = result_que.size(), index = output_sz - 1;
     std::ofstream fout("output.txt", std::ios::out);
     while (!result_que.empty()) {
@@ -190,11 +202,11 @@ int main(int argc, char** argv) {
         } else if (rot == 2) {
             rot = -45;
         }
-        output[index] = T<int, int, int>(data_rows - 1 - row, col, rot);
+        output[index] = std::tuple<int, int, int, float>(data_rows - 1 - row, col, rot, temp.second);
         index --;
     }
     for (int i = 0; i < output_sz; i ++) {
-        fout << std::get<0>(output[i]) << " " << std::get<1>(output[i]) << " " << std::get<2>(output[i]) << std::endl;
+        fout << std::get<3>(output[i]) << " " << std::get<0>(output[i]) << " " << std::get<1>(output[i]) << " " << std::get<2>(output[i]) << std::endl;
     }
     fout.close();
     cudaFree(result_cu);
