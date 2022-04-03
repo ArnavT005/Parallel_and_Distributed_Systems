@@ -15,9 +15,7 @@ struct BB{
     int h;
 
   __device__
-    void rotate(int rot);
-  __device__
-    BB intersect(const BB& other) const;
+    bool rotate(int rot, int rows, int cols);
 };
 
 __device__

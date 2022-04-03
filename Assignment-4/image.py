@@ -11,7 +11,7 @@ with open(filename, "r") as f:
     image = np.array(image, dtype=np.uint8)
     image = image.reshape((n, m, 3))
     pil_image = Image.fromarray(image, 'RGB')
-    pil_image.save("data_2.png")
+    pil_image.save("query.png")
     pil_image.show()
 
 

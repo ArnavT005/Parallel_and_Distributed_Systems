@@ -7,7 +7,7 @@ main: *.cu *.cuh *.cpp *.hpp
 	nvcc $(CFLAGS) main.o util.o img.o -o main
 
 run: main
-	./main data_image.txt query_image.txt 1000 2 10
+	./main data_image_a.txt query_image_a.txt 10 10 6
 
 clean:
 	rm -f *.o main output.txt

@@ -28,13 +28,11 @@ int get_value(int* arr, int i, int j, int k, int rows, int cols){
 
 __device__
 float get_prefix_sum(const BB& bb, int rows, int cols,  float* ps_mat){
-  auto mat_bb = BB{0, rows - 1, cols-1, rows-1};
-  auto intersect_bb = bb.intersect(mat_bb);
   float ret = 0;
-  ret += get_value(ps_mat, intersect_bb.y, intersect_bb.x+intersect_bb.w, rows, cols);
-  ret -= get_value(ps_mat, intersect_bb.y, intersect_bb.x - 1, rows, cols);
-  ret -= get_value(ps_mat, intersect_bb.y-intersect_bb.h - 1, intersect_bb.x + intersect_bb.w, rows, cols);
-  ret += get_value(ps_mat, intersect_bb.y - intersect_bb.h - 1, intersect_bb.x - 1, rows, cols);
+  ret += get_value(ps_mat, bb.y, bb.x + bb.w, rows, cols);
+  ret -= get_value(ps_mat, bb.y, bb.x - 1, rows, cols);
+  ret -= get_value(ps_mat, bb.y - bb.h - 1, bb.x + bb.w, rows, cols);
+  ret += get_value(ps_mat, bb.y - bb.h - 1, bb.x - 1, rows, cols);
   return ret;
 }
 
@@ -74,7 +72,7 @@ float bilinear_interpolate(Point p, int ch, int rows, int cols, int* data){
 }
 
 __device__
-void BB::rotate(int rot){
+bool BB::rotate(int rot, int rows, int cols){
   auto anchor = Point{(float)x,(float)y};
   auto p1 = rotate_point(anchor, Point{(float)w,(float) 0}, rot, h + 1);
   auto p2 = rotate_point(anchor, Point{(float)0,(float)0}, rot, h + 1);
@@ -82,21 +80,15 @@ void BB::rotate(int rot){
   auto p4 = rotate_point(anchor, Point{(float)0, (float)h}, rot, h + 1);
   auto xl = min(p1.x, min(p2.x, min(p3.x, p4.x)));
   auto xr = max(p1.x, max(p2.x, max(p3.x, p4.x)));
-  auto yt = max(p1.y, max(p2.y, max(p3.y, p4.y)));
-  auto yb = min(p1.y, min(p2.y, min(p3.y, p4.y)));
+  auto yt = min(p1.y, min(p2.y, min(p3.y, p4.y)));
+  auto yb = max(p1.y, max(p2.y, max(p3.y, p4.y)));
+  if (xl < 0 || xr > (cols - 1) || yb > (rows - 1) || yt < 0) {
+    return false;
+  }
   x = ceil(xl);
-  y = floor(yt);
+  y = floor(yb);
   w = floor(xr) - x;
-  h = y - ceil(yb);
-}
-
-__device__
-BB BB::intersect(const BB& other) const {
-  BB ret;
-  ret.x = max(x, other.x);
-  ret.y = min(y, other.y);
-  ret.w = min(x+w, other.x+other.w) - ret.x;
-  ret.h = ret.y - max(y - h, other.y - other.h);
-  return ret;
+  h = y - ceil(yt);
+  return true;
 }
 
