@@ -8,7 +8,7 @@
 __global__
 void find(float th2, int* query_cu, int query_rows, int query_cols, float graysum_avg, int* data_cu, int data_rows, int data_cols, ll* prefixsum_cu, float* result_cu, float* graydiff_cu, float* query_rotated_1_cu, float* query_rotated_2_cu) {
     // extern __shared__ float rmsd[];
-    extern __shared__ int arr[];
+    // extern __shared__ int arr[];
     // int row, col, rot, angle;
     // row = blockIdx.x;
     // col = blockIdx.y; 
@@ -114,6 +114,9 @@ void find(float th2, int* query_cu, int query_rows, int query_cols, float graysu
             rmsd += ((data_px[0] - query_px[0]) * (data_px[0] - query_px[0])) + ((data_px[1] - query_px[1]) * (data_px[1] - query_px[1])) + ((data_px[2] - query_px[2]) * (data_px[2] - query_px[2]));
         }
         result_cu[row * data_cols * 3 + col * 3 + rot] = sqrt(rmsd / (query_rows * query_cols * 3));
+        if (row == 1199 && col == 1000 && rot == 2) {
+            printf("RMSD: %f\n", result_cu[row * data_cols * 3 + col * 3 + rot]);
+        }
         // }
     }
 
@@ -356,7 +359,7 @@ int main(int argc, char** argv) {
     
     // invoke kernel
     // find<<<grid_dim, block_dim, block_dim.x * sizeof(float)>>>(th2, query_cu, query_rows, query_cols, graysum_avg, data_cu, prefixsum_cu, result_cu);
-    find<<<grid_dim, block_dim, block_sz * sizeof(int)>>>(th2, query_cu, query_rows, query_cols, graysum_avg, data_cu, data_rows, data_cols, prefixsum_cu, result_cu, graydiff_cu, query_rotated_1_cu, query_rotated_2_cu);
+    find<<<grid_dim, block_dim>>>(th2, query_cu, query_rows, query_cols, graysum_avg, data_cu, data_rows, data_cols, prefixsum_cu, result_cu, graydiff_cu, query_rotated_1_cu, query_rotated_2_cu);
     cudaMemcpy(result_arr.data(), result_cu, data_mem * sizeof(float), cudaMemcpyDeviceToHost);
     cudaMemcpy(graydiff_arr.data(), graydiff_cu, data_mem * sizeof(float), cudaMemcpyDeviceToHost);
     
