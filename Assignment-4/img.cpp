@@ -81,71 +81,55 @@ matrix<int>* imread(string file_img) {
     return img_mat;
 }
 
-matrix<float>* rgb2gray(matrix<int>* img){
-    auto shape = img->shape();
-    auto row = std::get<0>(shape);
-    auto col = std::get<1>(shape);
-    auto dim = std::get<2>(shape);
-
-    auto gray_img = new matrix<float>(row, col, 1);
-    for (int i = 0; i < row; i ++) {
-        for (int j = 0; j < col; j ++) {
-            int R = img->get(i, j, 0);
-            int G = img->get(i, j, 1);
-            int B = img->get(i, j, 2);
-            float gray = (R + G + B) / 3.0f;
-            gray_img->set(i, j, 0, gray);
-        }
-    }
-    return gray_img;
-}
-
 float graysum(matrix<int>* img){
     auto shape = img->shape();
     auto row = std::get<0>(shape);
     auto col = std::get<1>(shape);
     auto dim = std::get<2>(shape);
-    float sum = 0;
+    ll temp = 0;
     for (int i = 0; i < row; i ++) {
         for (int j = 0; j < col; j ++) {
-            float dim_sum = 0;
+            ll dim_sum = 0;
             for(int k = 0; k < dim; k++){
-                dim_sum += img->get(i,j,k);
+                dim_sum += (ll) img->get(i,j,k);
             }
-            sum += dim_sum / dim;
+            temp += dim_sum;
         }
     }
-    sum /= (row * col);
+    float sum = temp / ((float) dim * row * col);
     return sum;
 }
 
 
-matrix<float>* prefixsum(matrix<float>* img){
+matrix<ll>* prefixsum(matrix<int>* img){
     auto shape = img->shape();
     auto row = std::get<0>(shape);
     auto col = std::get<1>(shape);
     auto dim = std::get<2>(shape);
 
-    assert(dim == 1);
+    assert(dim == 3);
 
-    auto ps = new matrix<float>();
-    ps->resize(row, col, 1, true, 0.0f);
+    auto ps = new matrix<ll>();
+    ps->resize(row, col, 1, true, 0);
     for (int i = 0; i < row; i ++) {
         for (int j = 0; j < col; j ++) {
-            int val = img->get(i, j, 0);
-            float sum = 0;
+            ll val = (ll) img->get(i, j, 0) + img->get(i, j, 1) + img->get(i, j, 2);
+            ll sum = 0;
             if (i != 0 && j != 0){
                 sum = val + ps->get(i-1, j, 0) + ps->get(i, j-1, 0) - ps->get(i-1,j-1,0);
-            } else if (i != 0){
-                sum = val + ps->get(i-1, j, 0);
-            } else if (j != 0){
-                sum = val + ps->get(i, j-1, 0);
             } else {
-                sum = float(val);
+                if (i != 0) {
+                    sum = val + ps->get(i-1, j, 0);
+                } else {
+                    if (j != 0) {
+                        sum = val + ps->get(i, j-1, 0);
+                    } else {
+                        sum = val;
+                    }
+                }
             }
             ps->set(i, j, 0, sum);
         }
     }
     return ps;
 }
-

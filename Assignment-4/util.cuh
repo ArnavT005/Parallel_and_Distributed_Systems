@@ -25,13 +25,19 @@ struct Point{
 };
 
 __device__
-int get_value(int* arr, int i, int j, int k, int rows, int cols);
+ll get_value(ll* arr, int i, int j, int rows, int cols);
 
 __device__
-float get_prefix_sum(const BB& bb, int rows, int cols, float* ps_mat);
+void get_value(int* arr, int i, int j, int k, int rows, int cols, float *px);
 
 __device__
-float bilinear_interpolate(Point p, int ch, int rows, int cols, int* data);
+ll get_prefix_sum(const BB& bb, int rows, int cols, ll* ps_mat);
 
 __device__
+void bilinear_interpolate(Point p, int ch, int rows, int cols, int* data, float data_px[]);
+
+__device__ __host__
 Point rotate_point(Point anchor, Point grid_pos, int rot, int query_rows);
+
+__device__ __host__
+void rotate_matrix(int rows, int cols, int rot, float* out);

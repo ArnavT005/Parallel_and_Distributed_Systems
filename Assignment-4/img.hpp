@@ -10,6 +10,7 @@
 #include <assert.h>
 
 typedef unsigned int uint;
+typedef long long ll;
 using namespace std;
 
 template <typename T, typename K>
@@ -38,8 +39,8 @@ class matrix {
 
 template class matrix<int>;
 template class matrix<float>;
+template class matrix<ll>;
 
 matrix<int>* imread(string);
-matrix<float>* rgb2gray(matrix<int>*);
 float graysum(matrix<int>*);
-matrix<float>* prefixsum(matrix<float>*);
+matrix<ll>* prefixsum(matrix<int>*);
